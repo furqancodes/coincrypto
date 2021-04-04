@@ -21,7 +21,7 @@ describe("blockchain", () => {
     describe("starts with Genesis Block", () => {
       it("returns false", () => {
         blockchain.chain[0] = { data: "u got sum fake ass genesis block!" };
-        expect(Blockchain.isValidChain(blockchain.chain).toBe(false));
+        expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
       });
     });
     describe("starts with genesis block and have multiple blocks", () => {
@@ -33,18 +33,18 @@ describe("blockchain", () => {
       describe("lasthash of a node has changed", () => {
         it("returns false", () => {
           blockchain.chain[2].lastHash = "got some fakass lasthash nigah";
-          expect(Blockchain.isValidChain(blockchain.chain).toBe(false));
+          expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
         });
       });
       describe("Data of a block has changed", () => {
         it("returns false", () => {
           blockchain.chain[2].data = "some fake ass data ";
-          expect(Blockchain.isValidChain(blockchain.chain).toBe(false));
+          expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
         });
       });
       describe("clean blockchain", () => {
         it("returns true", () => {
-          expect(Blockchain.isValidChain(blockchain.chain).toBe(true));
+          expect(Blockchain.isValidChain(blockchain.chain)).toBe(true);
         });
       });
     });
