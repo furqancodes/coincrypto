@@ -40,7 +40,7 @@ describe("Block", () => {
     it("returns a Block Instance", () => {
       expect(minedBlock instanceof Block).toBe(true);
     });
-    it("sets `lastHash` equal to `hash` of lastBlock", () => {
+    it("sets `lastHashaa` equal to `hash` of lastBlock", () => {
       expect(minedBlock.lastHash).toEqual(lastBlock.hash);
     });
     it("sets the `data`", () => {
