@@ -4,6 +4,8 @@ describe("blockchain", () => {
   let blockchain;
   beforeEach(() => {
     blockchain = new Blockchain();
+    newChain = new Blockchain();
+    orginalChain = blockchain.chain;
   });
 
   it("blockchain should have `chain` array", () => {
@@ -45,6 +47,35 @@ describe("blockchain", () => {
       describe("clean blockchain", () => {
         it("returns true", () => {
           expect(Blockchain.isValidChain(blockchain.chain)).toBe(true);
+        });
+      });
+    });
+  });
+  describe("replaceChain", () => {
+    describe("when the new chain is not long enough", () => {
+      it("does not replace the chain", () => {
+        newChain.chain[0] = { new: "chainis" };
+        blockchain.replaceChain(newChain.chain);
+        expect(blockchain.chain).toEqual(orginalChain);
+      });
+    });
+    describe("when the newChain is longer", () => {
+      beforeEach(() => {
+        newChain.addBlock({ data: "test-one-data" });
+        newChain.addBlock({ data: "test-two-data" });
+        newChain.addBlock({ data: "test-three-data" });
+      });
+      describe("when the chain is valid", () => {
+        it("does  replace chain", () => {
+          blockchain.replaceChain(newChain.chain);
+          expect(blockchain.chain).toEqual(newChain.chain);
+        });
+      });
+      describe("when the chain is invalid", () => {
+        it("does not replace chain", () => {
+          newChain.chain[2].hash = "again some fake ass hash";
+          blockchain.replaceChain(newChain.chain);
+          expect(blockchain.chain).toEqual(orginalChain);
         });
       });
     });
