@@ -35,7 +35,9 @@ class Blockchain {
         const realHash = cryptoHash(
           chain[i].data,
           chain[i].timestamp,
-          chain[i].lastHash
+          chain[i].lastHash,
+          chain[i].nonce,
+          chain[i].difficulty
         );
         if (chain[i].hash !== realHash) {
           return false;
