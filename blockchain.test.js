@@ -8,7 +8,7 @@ describe("blockchain", () => {
     orginalChain = blockchain.chain;
   });
 
-  it("blockchain should have `chain` array", () => {
+  it("blockchain-should-have-`chain`-array", () => {
     expect(blockchain.chain instanceof Array).toBe(true);
   });
   it("starts with genesis block", () => {
@@ -44,7 +44,7 @@ describe("blockchain", () => {
           expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
         });
       });
-      describe("clean blockchain", () => {
+      describe("clean", () => {
         it("returns true", () => {
           expect(Blockchain.isValidChain(blockchain.chain)).toBe(true);
         });
