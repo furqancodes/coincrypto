@@ -100,5 +100,9 @@ describe("Block", () => {
         })
       ).toEqual(block.difficulty - 1);
     });
+    it("sets difficulty to 1", () => {
+      block.difficulty = -1;
+      expect(Block.adjustDifficulty({ originalBlock: block })).toEqual(1);
+    });
   });
 });
