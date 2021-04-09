@@ -20,7 +20,7 @@ class Block {
 
     do {
       nonce++;
-      timestamp = Date.now;
+      timestamp = Date.now();
       difficulty = Block.adjustDifficulty({
         originalBlock: lastBlock,
         timestamp,
