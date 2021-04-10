@@ -32,6 +32,8 @@ class Blockchain {
       if (chain[i].lastHash !== chain[i - 1].hash) {
         return false;
       }
+      const lastDifficulty = chain[i - 1].difficulty;
+
       const realHash = cryptoHash(
         chain[i].data,
         chain[i].timestamp,
@@ -42,6 +44,7 @@ class Blockchain {
       if (chain[i].hash !== realHash) {
         return false;
       }
+      if (Math.abs(lastDifficulty - chain[i].difficulty) > 1) return false;
     }
     return true;
   }
