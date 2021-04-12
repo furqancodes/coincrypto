@@ -24,9 +24,8 @@ class PubSub {
     return {
       message: (msgObj) => {
         const { channel, message } = msgObj;
-        console.log(
-          `message recieved suceesfully . CHANNEL :${channel},Message: ${message}`
-        );
+        console.log(`SUCEESSfully conncected to ${channel} channel`, channel);
+        console.table(`message------------------${message}`);
         const parsedMessage = JSON.parse(message);
         if (channel === CHANNELS.BLOCKCHAIN) {
           this.blockchain.replaceChain(parsedMessage);
