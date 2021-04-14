@@ -1,7 +1,6 @@
-const Blockchain = require("./Blockchain");
+const Blockchain = require("./index.js");
 const block = require("./block");
-const cryptoHash = require("./cryptoHash");
-const Block = require("./block");
+const cryptoHash = require("../utils/cryptoHash.js");
 describe("blockchain", () => {
   let blockchain;
   beforeEach(() => {

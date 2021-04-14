@@ -1,5 +1,5 @@
 const Block = require("./block");
-const cryptoHash = require("./cryptoHash");
+const cryptoHash = require("../utils/cryptoHash.js");
 class Blockchain {
   constructor() {
     this.chain = [Block.genesis()];
