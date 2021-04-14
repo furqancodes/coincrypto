@@ -54,7 +54,7 @@ describe("blockchain", () => {
           const data = [];
           const difficulty = lastBlock.difficulty - 3;
           const hash = cryptoHash(timestamp, lastHash, difficulty, nonce, data);
-          const badBlock = new Block({
+          const badBlock = new block({
             timestamp,
             lastHash,
             hash,
