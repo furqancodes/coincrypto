@@ -5,7 +5,7 @@ class Wallet {
   constructor() {
     const keyPair = ec.genKeyPair();
     this.balance = STARTING_BALANCE;
-    this.publicKey = keyPair.getPublic();
+    this.publicKey = keyPair.getPublic().encode("hex");
   }
 }
 module.exports = Wallet;
