@@ -1,4 +1,5 @@
 const { v1: uuidv1 } = require("uuid");
+const { verifySignature } = require("../utils");
 class Transactions {
   constructor({ senderWallet, recipient, amount }) {
     this.id = uuidv1();
@@ -22,6 +23,20 @@ class Transactions {
       address: senderWallet.publicKey,
       signature: senderWallet.sign(outputMap),
     };
+  }
+  static validtransactions(transaction) {
+    const { input, outputMap } = transaction;
+    const { timestamp, amount, address, signature } = input;
+    const outputTotal = Object.values(outputMap).reduce(
+      (total, outputAmt) => total + outputAmt
+    );
+    if (amount !== outputTotal) {
+      return false;
+    }
+    if (!verifySignature({ publicKey: address, data: outputMap, signature })) {
+      return false;
+    }
+    return true;
   }
 }
 module.exports = Transactions;

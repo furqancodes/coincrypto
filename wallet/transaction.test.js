@@ -57,4 +57,25 @@ describe("Transactions", () => {
       ).toBe(true);
     });
   });
+  describe("validTransactions()", () => {
+    describe("when the transaction is valid", () => {
+      it("returns true", () => {
+        expect(Transactions.validtransactions(transactions)).toBe(true);
+      });
+    });
+    describe("when the transactions is invalid", () => {
+      describe("when the transactions output value is invalid", () => {
+        it("returns false", () => {
+          transactions.outputMap[senderWallet.publicKey] = 99999;
+          expect(Transactions.validtransactions(transactions)).toBe(false);
+        });
+      });
+      describe("when the transactions input signature is invalid", () => {
+        it("returns false", () => {
+          transactions.input.signature = new Wallet().sign("foulData");
+          expect(Transactions.validtransactions(transactions)).toBe(false);
+        });
+      });
+    });
+  });
 });
