@@ -2,11 +2,12 @@ const Transactions = require("./transactions");
 const Wallet = require("./index");
 const Transactionpool = require("./transaction-pool.js");
 describe("Transactionpool", () => {
-  let transactionPool, transaction;
+  let transactionPool, transaction, senderWallet;
   beforeEach(() => {
     transactionPool = new Transactionpool();
+    senderWallet = new Wallet();
     transaction = new Transactions({
-      senderWallet: new Wallet(),
+      senderWallet,
       recipient: "a fake recipient",
       amount: 125,
     });
@@ -15,6 +16,16 @@ describe("Transactionpool", () => {
     it("adds a transaction", () => {
       transactionPool.setTransaction(transaction);
       expect(transactionPool.transactionMap[transaction.id]).toBe(transaction);
+    });
+  });
+  describe("existingTransactions()", () => {
+    it("returns an existing transactions given an input address", () => {
+      transactionPool.setTransaction(transaction);
+      expect(
+        transactionPool.existingTransaction({
+          inputAddress: senderWallet.publicKey,
+        })
+      ).toBe(transaction);
     });
   });
 });
