@@ -31,6 +31,9 @@ app.post("/api/mine", (req, res) => {
   res.redirect("/api/blocks");
 });
 
+app.get("/api/transaction-pool-map", (req, res) => {
+  res.json(transactionPool.transactionMap);
+});
 app.post("/api/transact", (req, res) => {
   const { amount, recipient } = req.body;
   let transaction = transactionPool.existingTransaction({
