@@ -12,7 +12,7 @@ class Transactions {
   }
   createOutputMap({ senderWallet, recipient, amount }) {
     const outputMap = {};
-    outputMap[recipient] = amount;
+    outputMap[recipient] = parseInt(amount, 10);
     outputMap[senderWallet.publicKey] = senderWallet.balance - amount;
     return outputMap;
   }
@@ -43,9 +43,10 @@ class Transactions {
       throw new Error("Amount exceeds balance");
     }
     if (!this.outputMap[recipient]) {
-      this.outputMap[recipient] = amount;
+      this.outputMap[recipient] = parseInt(amount, 10);
     } else {
-      this.outputMap[recipient] = this.outputMap[recipient] + amount;
+      this.outputMap[recipient] =
+        this.outputMap[recipient] + parseInt(amount, 10);
     }
     this.outputMap[senderWallet.publicKey] =
       this.outputMap[senderWallet.publicKey] - amount;

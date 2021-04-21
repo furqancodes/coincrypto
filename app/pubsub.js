@@ -7,7 +7,6 @@ const credentials = {
   subscribeKey: process.env.SUBSCRIBEKEY,
   secretKey: process.env.SECRETKEY,
 };
-console.log(credentials);
 const CHANNELS = {
   TEST: "TEST",
   BLOCKCHAIN: "BLOCKCHAIN",
