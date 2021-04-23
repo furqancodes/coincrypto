@@ -9,4 +9,12 @@ const GENESIS_DATA = {
   data: [],
 };
 const STARTING_BALANCE = 1000;
-module.exports = { GENESIS_DATA, MINE_RATE, STARTING_BALANCE };
+const REWARD_ADDRESS = { address: "*authorised-reward*" };
+const MINING_REWARD = 50;
+module.exports = {
+  MINING_REWARD,
+  REWARD_ADDRESS,
+  GENESIS_DATA,
+  MINE_RATE,
+  STARTING_BALANCE,
+};
