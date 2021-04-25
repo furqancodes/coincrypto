@@ -2,6 +2,7 @@ const { STARTING_BALANCE } = require("../config");
 const { ec } = require("../utils");
 const cryptoHash = require("../utils/cryptoHash");
 const Transactions = require("./transactions");
+
 class Wallet {
   constructor() {
     this.keyPair = ec.genKeyPair();
@@ -20,8 +21,25 @@ class Wallet {
       amount,
       recipient,
     });
-
     return transaction;
+  }
+  static calculateBalance({ chain, address }) {
+    let totalAmount = 0;
+    for (let i = 0; i < chain.length; i++) {
+      let { data } = chain[i];
+      if (data) {
+        for (let j = 0; j < data.length; j++) {
+          const { outputMap } = data[j];
+          console.log(outputMap[address]);
+
+          if (outputMap[address]) {
+            console.log(outputMap[address]);
+            totalAmount = totalAmount + outputMap[address];
+          }
+        }
+      }
+    }
+    return STARTING_BALANCE + totalAmount;
   }
 }
 module.exports = Wallet;

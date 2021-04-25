@@ -12,17 +12,19 @@ class Blockchain {
     this.chain.push(newBlock);
   }
   replaceChain(chain, onSuccess) {
+    if (onSuccess) {
+      console.log("clearing Pool");
+      onSuccess();
+    }
     if (chain.length <= this.chain.length) {
-      console.error("chain must be bigger");
+      console.error("incoming chain must be bigger");
       return;
     }
     if (!Blockchain.isValidChain(chain)) {
       console.error("chain must be valid ");
       return;
     }
-    if (onSuccess) {
-      onSuccess();
-    }
+
     console.log("replacing chain with", chain);
     this.chain = chain;
   }
