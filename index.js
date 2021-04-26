@@ -41,6 +41,7 @@ app.post("/api/mine", (req, res) => {
 app.get("/api/transaction-pool-map", (req, res) => {
   res.json(transactionPool.transactionMap);
 });
+
 app.post("/api/transact", (req, res) => {
   const { amount, recipient } = req.body;
   let transaction = transactionPool.existingTransaction({
@@ -64,9 +65,18 @@ app.post("/api/transact", (req, res) => {
 
   res.json({ type: "SUCCESSFULL TRANSACTION", message: transaction });
 });
+
 app.get("/api/mine-transactions", (req, res) => {
   transactionMiner.mineTranaction();
   res.redirect("/api/blocks");
+});
+
+app.get("/api/wallet-info", (req, res) => {
+  const address = wallet.publicKey;
+  res.json({
+    address,
+    balance: Wallet.calculateBalance({ chain: blockchain.chain, address }),
+  });
 });
 
 const syncRoot = () => {
