@@ -30,22 +30,28 @@ class Wallet {
     return transaction;
   }
   static calculateBalance({ chain, address }) {
+    let hasConductedTransaction = false;
     let totalAmount = 0;
-    for (let i = 1; i < chain.length; i++) {
+    for (let i = chain.length - 1; i > 0; i--) {
       let { data } = chain[i];
       for (let j = 0; j < data.length; j++) {
-        const { outputMap } = data[j];
-        console.log(outputMap[address]);
+        const { outputMap, input } = data[j];
+        if (input.address === address) {
+          hasConductedTransaction = true;
+        }
 
         if (outputMap[address]) {
           console.log(outputMap[address]);
           totalAmount = totalAmount + outputMap[address];
-        } else {
-          totalAmount = totalAmount;
         }
       }
+      if (hasConductedTransaction) {
+        break;
+      }
     }
-    return STARTING_BALANCE + totalAmount;
+    return hasConductedTransaction
+      ? totalAmount
+      : STARTING_BALANCE + totalAmount;
   }
 }
 module.exports = Wallet;
