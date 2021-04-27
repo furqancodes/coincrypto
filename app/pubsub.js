@@ -48,6 +48,7 @@ class PubSub {
               this.transactionPool.setTransaction(parsedMessage);
             }
             break;
+          default:
             break;
         }
       },

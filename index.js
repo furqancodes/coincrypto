@@ -93,7 +93,7 @@ const syncRoot = () => {
       if (!err && res.statusCode === 200) {
         const rootTransactionPoolMap = JSON.parse(body);
         console.log(
-          `replace transaction poolmao on a sync with ${rootTransactionPoolMap}`
+          `replace transaction poolmap on a sync with ${rootTransactionPoolMap}`
         );
         transactionPool.setMap(rootTransactionPoolMap);
       }
