@@ -15,20 +15,20 @@ class Blockchain {
     });
     this.chain.push(newBlock);
   }
-  replaceChain(chain, onSuccess) {
-    if (onSuccess) {
-      console.log("clearing Pool");
-      onSuccess();
-    }
+  replaceChain(chain, validateTransactions, onSuccess) {
     if (chain.length <= this.chain.length) {
       console.error("incoming chain must be bigger");
       return;
-    }
-    if (!Blockchain.isValidChain(chain)) {
+    } else if (!Blockchain.isValidChain(chain)) {
       console.error("chain must be valid ");
       return;
+    } else if (validateTransactions && !this.validTransactionData({ chain })) {
+      console.error("The incoming chain has invalid data");
+      return;
+    } else if (onSuccess) {
+      console.log("clearing Pool");
+      onSuccess();
     }
-
     console.log("replacing chain with", chain);
     this.chain = chain;
   }
