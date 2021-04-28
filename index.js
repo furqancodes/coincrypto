@@ -102,7 +102,7 @@ app.post("/api/deposit", (req, res) => {
     if (transaction) {
       transaction.update({ senderWallet: BANKWALLET, recipient, amount });
     } else {
-      transaction = wallet.createTransactions({
+      transaction = wallet.createDepositTransactions({
         recipient,
         amount,
         chain: blockchain.chain,
