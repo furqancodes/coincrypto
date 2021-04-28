@@ -5,6 +5,7 @@ const PubSub = require("./app/pubsub");
 const Transactionpool = require("./wallet/transaction-pool");
 const Wallet = require("./wallet");
 const TransactionMiner = require("./app/transaction-miner");
+const { mineBlock } = require("./blockchain/block");
 
 const app = express();
 const blockchain = new Blockchain();
@@ -19,13 +20,21 @@ const transactionMiner = new TransactionMiner({
 });
 
 const DEFAULT_PORT = 3000;
-const ROOT_NODE = `http://localhost:${DEFAULT_PORT}`;
+const isDevelopment = process.env.ENV === "development";
+
+const ROOT_NODE = isDevelopment
+  ? `http://localhost:${DEFAULT_PORT}`
+  : "https://cyrpto.herokuapp.com";
 
 setTimeout(() => {
   pubsub.broadcastChain();
 }, 1000);
 
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send({ getBlockchain: "/api/blocks", mineBlock: "/api/mine" });
+});
 
 app.get("/api/blocks", (req, res) => {
   res.send(blockchain.chain);
@@ -39,7 +48,7 @@ app.post("/api/mine", (req, res) => {
 });
 
 app.get("/api/transaction-pool-map", (req, res) => {
-  res.json(transactionPool.transactionMap);
+  res.send(transactionPool.transactionMap);
 });
 
 app.post("/api/transact", (req, res) => {
