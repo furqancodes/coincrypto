@@ -5,7 +5,6 @@ const PubSub = require("./app/pubsub");
 const Transactionpool = require("./wallet/transaction-pool");
 const Wallet = require("./wallet");
 const TransactionMiner = require("./app/transaction-miner");
-const { mineBlock } = require("./blockchain/block");
 
 const app = express();
 const blockchain = new Blockchain();
@@ -82,6 +81,8 @@ app.get("/api/mine-transactions", (req, res) => {
 
 app.get("/api/wallet-info", (req, res) => {
   const address = wallet.publicKey;
+  console.log(`process.env.port : ${process.env.PORT}`);
+  console.log(`root Node : ${ROOT_NODE}`);
   res.send({
     address,
     balance: Wallet.calculateBalance({ chain: blockchain.chain, address }),
