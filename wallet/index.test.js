@@ -1,9 +1,9 @@
 const Wallet = require("./index");
+const BankWallet = require("./BankWallet");
 const { verifySignature } = require("../utils");
 const Transactions = require("./transactions");
 const Blockchain = require("../blockchain");
 const { STARTING_BALANCE } = require("../config");
-
 describe("Wallet", () => {
   let wallet;
   beforeEach(() => {
@@ -77,6 +77,45 @@ describe("Wallet", () => {
         });
         expect(calculateBalanceMock).toHaveBeenCalled();
         Wallet.calculateBalance = orginalCalculateBalance;
+      });
+    });
+  });
+  describe("createDepositTransaction()", () => {
+    describe("amount is valid", () => {
+      let transaction, amount;
+      let orginalBalance, blockchain, BANKWALLET;
+      beforeEach(() => {
+        BANKWALLET = new BankWallet();
+        orginaBankWalletBalance = BANKWALLET.balance;
+        orginalBalance = wallet.balance;
+        amount = 1024;
+        blockchain = new Blockchain();
+        transaction = BANKWALLET.createDepositTransactions({
+          amount,
+          recipient: wallet.publicKey,
+          chain: blockchain.chain,
+        });
+        blockchain.addBlock({ data: [transaction] });
+      });
+      it("creates an instance of `Transaction`", () => {
+        expect(transaction instanceof Transactions).toBe(true);
+      });
+      it("matches the transaction input with the Bankwallet", () => {
+        expect(transaction.input.address).toEqual(BANKWALLET.publicKey);
+      });
+      it("Transaction consist of outputMap", () => {
+        expect(transaction.outputMap[wallet.publicKey]).toEqual(amount);
+      });
+      it("adds amount to balance of wallet", () => {
+        expect(
+          Wallet.calculateBalance({
+            chain: blockchain.chain,
+            address: wallet.publicKey,
+          })
+        ).toEqual(orginalBalance + amount);
+      });
+      it("withdraw amount from balance of BANK_WALLET", () => {
+        expect(BANKWALLET.balance).toEqual(orginaBankWalletBalance - amount);
       });
     });
   });
