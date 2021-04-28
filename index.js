@@ -4,12 +4,14 @@ const Blockchain = require("./blockchain/index");
 const PubSub = require("./app/pubsub");
 const Transactionpool = require("./wallet/transaction-pool");
 const Wallet = require("./wallet");
+const BankWallet = require("./wallet/BankWallet");
 const TransactionMiner = require("./app/transaction-miner");
 
 const app = express();
 const blockchain = new Blockchain();
 const transactionPool = new Transactionpool();
 const wallet = new Wallet();
+const BANKWALLET = new BankWallet();
 const pubsub = new PubSub({ wallet, blockchain, transactionPool });
 const transactionMiner = new TransactionMiner({
   blockchain,
@@ -88,6 +90,30 @@ app.get("/api/wallet-info", (req, res) => {
     address,
     balance: Wallet.calculateBalance({ chain: blockchain.chain, address }),
   });
+});
+
+app.post("/api/deposit", (req, res) => {
+  const { amount, recipient } = req.body;
+  let transaction = transactionPool.existingTransaction({
+    inputAddress: BANKWALLET.publicKey,
+  });
+  try {
+    if (transaction) {
+      transaction.update({ senderWallet: BANKWALLET, recipient, amount });
+    } else {
+      transaction = wallet.createTransactions({
+        recipient,
+        amount,
+        chain: blockchain.chain,
+      });
+    }
+  } catch (error) {
+    return res.status(400).json({ type: "error", message: error.message });
+  }
+  transactionPool.setTransaction(transaction);
+  pubsub.broadcastTransaction(transaction);
+
+  res.json({ type: "SUCCESSFULLY DEPOSITED", message: transaction });
 });
 
 const syncRoot = () => {
