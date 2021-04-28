@@ -84,6 +84,7 @@ app.get("/api/wallet-info", (req, res) => {
   console.log(`process.env.port : ${process.env.PORT}`);
   console.log(`root Node : ${ROOT_NODE}`);
   res.send({
+    process: process.env.PORT,
     address,
     balance: Wallet.calculateBalance({ chain: blockchain.chain, address }),
   });
