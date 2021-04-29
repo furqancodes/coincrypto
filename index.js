@@ -92,9 +92,8 @@ app.get("/api/wallet-info", (req, res) => {
   });
 });
 
-app.post("/api/deposit", (req, res) => {
-  const { amount } = req.body;
-  const recipient = wallet.publicKey;
+app.post(`${ROOT_NODE}/api/deposit`, (req, res) => {
+  const { amount, recipient } = req.body;
   let transaction = transactionPool.existingTransaction({
     inputAddress: BANKWALLET.publicKey,
   });
