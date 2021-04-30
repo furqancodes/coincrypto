@@ -6,6 +6,7 @@ describe("Transactions", () => {
   let transactions, senderWallet, recipient, amount;
   beforeEach(() => {
     senderWallet = new Wallet();
+    senderWallet.balance = 1000;
     recipient = "recpient-public-key";
     amount = 100;
     transactions = new Transactions({

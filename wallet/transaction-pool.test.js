@@ -92,7 +92,9 @@ describe("Transactionpool", () => {
       const blockchain = new Blockchain();
       const expectedTransactionMap = {};
       for (let i = 0; i < 6; i++) {
-        const transaction = new Wallet().createTransactions({
+        const walletNew = new Wallet();
+        walletNew.balance = 1000;
+        const transaction = walletNew.createTransactions({
           recipient: "foo",
           amount: 20,
         });

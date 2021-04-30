@@ -3,6 +3,7 @@ const block = require("./block");
 const cryptoHash = require("../utils/cryptoHash.js");
 const Wallet = require("../wallet");
 const Transaction = require("../wallet/transactions");
+const { STARTING_BALANCE } = require("../config.js");
 describe("blockchain", () => {
   let blockchain, newChain, orginalChain, errorMock;
   beforeEach(() => {
@@ -137,19 +138,22 @@ describe("blockchain", () => {
 
     beforeEach(() => {
       wallet = new Wallet();
+      wallet.balance = 1000;
       transaction = wallet.createTransactions({
         recipient: "foo-address",
-        amount: 65,
+        amount: 0,
       });
+      console.log(transaction);
       rewardTransaction = Transaction.rewardTransaction({
         minerWallet: wallet,
       });
+      console.log(rewardTransaction);
     });
 
     describe("and the transaction data is valid", () => {
       it("returns true", () => {
         newChain.addBlock({ data: [transaction, rewardTransaction] });
-
+        console.log(newChain.chain);
         expect(blockchain.validTransactionData({ chain: newChain.chain })).toBe(
           true
         );

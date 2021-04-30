@@ -8,7 +8,7 @@ const GENESIS_DATA = {
   nonce: 0,
   data: [],
 };
-const STARTING_BALANCE = 1000;
+const STARTING_BALANCE = 0;
 const REWARD_ADDRESS = { address: "*authorised-reward*" };
 const MINING_REWARD = 50;
 module.exports = {

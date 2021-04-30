@@ -8,6 +8,7 @@ describe("Wallet", () => {
   let wallet;
   beforeEach(() => {
     wallet = new Wallet();
+    wallet.balance = 1000;
   });
 
   it("has a `balance`", () => {
@@ -87,7 +88,8 @@ describe("Wallet", () => {
       beforeEach(() => {
         BANKWALLET = new BankWallet();
         orginaBankWalletBalance = BANKWALLET.balance;
-        orginalBalance = wallet.balance;
+        wallet.balance = 1000;
+        orginalBalance = 0;
         amount = 1024;
         blockchain = new Blockchain();
         transaction = BANKWALLET.createDepositTransactions({
@@ -137,16 +139,24 @@ describe("Wallet", () => {
     describe("and there are outputs for the wallet", () => {
       let transactionOne, transactionTwo, transactionThree;
       beforeEach(() => {
-        transactionOne = new Wallet().createTransactions({
+        walletOne = new Wallet();
+        walletOne.balance = 1000;
+        walletTwo = new Wallet();
+        walletTwo.balance = 1000;
+        walletthree = new Wallet();
+        walletthree.balance = 1000;
+        walletfour = new Wallet();
+        walletfour.balance = 1000;
+        transactionOne = walletOne.createTransactions({
           recipient: wallet.publicKey,
           amount: 30,
         });
-        transactionTwo = new Wallet().createTransactions({
+        transactionTwo = walletTwo.createTransactions({
           recipient: wallet.publicKey,
           amount: 400,
         });
-        transactionThree = new Wallet().createTransactions({
-          recipient: new Wallet().publicKey,
+        transactionThree = walletthree.createTransactions({
+          recipient: walletfour.publicKey,
           amount: 200,
         });
         blockchain.addBlock({
@@ -195,7 +205,9 @@ describe("Wallet", () => {
             blockchain.addBlock({
               data: [recentTransaction, sameBlockTransaction],
             });
-            nextBlockTransction = new Wallet().createTransactions({
+            const someWallet = new Wallet();
+            someWallet.balance = 1000;
+            nextBlockTransction = someWallet.createTransactions({
               recipient: wallet.publicKey,
               amount: 400,
             });
