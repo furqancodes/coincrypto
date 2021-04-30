@@ -14,6 +14,8 @@ class BankWallet {
   createDepositTransactions({ amount, recipient, chain }) {
     if (chain) {
       this.balance = this.balance - amount;
+    } else {
+      throw new Error("chain not found");
     }
     const transaction = new Transactions({
       senderWallet: this,

@@ -41,13 +41,12 @@ class Blockchain {
       for (let transaction of block.data) {
         if (transaction.input.address === REWARD_ADDRESS.address) {
           rewardTransactionCount += 1;
-
           if (rewardTransactionCount > 1) {
             console.error("Miner rewards exceed limit");
             return false;
-          }
-
-          if (Object.values(transaction.outputMap)[0] !== MINING_REWARD) {
+          } else if (
+            Object.values(transaction.outputMap)[0] !== MINING_REWARD
+          ) {
             console.error("Miner reward amount is invalid");
             return false;
           }

@@ -82,6 +82,19 @@ describe("Wallet", () => {
     });
   });
   describe("createDepositTransaction()", () => {
+    describe("chain do not exist", () => {
+      BANKWALLET = new BankWallet();
+
+      it("returns false", () => {
+        expect(() => {
+          transactiontwo = BANKWALLET.createDepositTransactions({
+            amount: 10,
+            recipient: wallet.publicKey,
+          });
+        }).toThrow("chain not found");
+      });
+    });
+
     describe("amount is valid", () => {
       let transaction, amount;
       let orginalBalance, blockchain, BANKWALLET;

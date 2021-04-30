@@ -3,7 +3,6 @@ const block = require("./block");
 const cryptoHash = require("../utils/cryptoHash.js");
 const Wallet = require("../wallet");
 const Transaction = require("../wallet/transactions");
-const { STARTING_BALANCE } = require("../config.js");
 describe("blockchain", () => {
   let blockchain, newChain, orginalChain, errorMock;
   beforeEach(() => {
@@ -122,7 +121,7 @@ describe("blockchain", () => {
       describe("when the chain is invalid", () => {
         beforeEach(() => {
           newChain.chain[2].hash = "again some fake ass hash";
-          blockchain.replaceChain(newChain.chain);
+          blockchain.replaceChain(newChain.chain, true);
         });
         it("does not replace chain", () => {
           expect(blockchain.chain).toEqual(orginalChain);
@@ -154,9 +153,7 @@ describe("blockchain", () => {
       it("returns true", () => {
         newChain.addBlock({ data: [transaction, rewardTransaction] });
         console.log(newChain.chain);
-        expect(blockchain.validTransactionData({ chain: newChain.chain })).toBe(
-          true
-        );
+        expect(blockchain.validTransactionData({ chain: newChain })).toBe(true);
         expect(errorMock).not.toHaveBeenCalled();
       });
     });
