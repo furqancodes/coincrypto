@@ -1,7 +1,7 @@
 const { ec } = require("../utils");
 const cryptoHash = require("../utils/cryptoHash");
 const Transactions = require("./transactions");
-
+const Wallet = require("./index");
 class BankWallet {
   constructor() {
     this.keyPair = ec.genKeyPair();
@@ -11,12 +11,11 @@ class BankWallet {
   sign(data) {
     return this.keyPair.sign(cryptoHash(data));
   }
-  createDepositTransactions({ amount, recipient, chain }) {
-    if (chain) {
-      this.balance = this.balance - amount;
-    } else {
-      throw new Error("chain not found");
-    }
+  static createWallet() {
+    const wallet = new Wallet();
+    return wallet;
+  }
+  createDepositTransactions({ amount, recipient }) {
     const transaction = new Transactions({
       senderWallet: this,
       amount,

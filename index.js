@@ -10,15 +10,10 @@ const TransactionMiner = require("./app/transaction-miner");
 const app = express();
 const blockchain = new Blockchain();
 const transactionPool = new Transactionpool();
-const wallet = new Wallet();
+let wallet;
 const BANKWALLET = new BankWallet();
 const pubsub = new PubSub({ wallet, blockchain, transactionPool });
-const transactionMiner = new TransactionMiner({
-  blockchain,
-  transactionPool,
-  wallet,
-  pubsub,
-});
+let transactionMiner;
 
 const DEFAULT_PORT = 3000;
 const isDevelopment = process.env.ENV === "development";
@@ -32,6 +27,23 @@ setTimeout(() => {
 }, 1000);
 
 app.use(express.json());
+
+app.get("/api/BANK/create-wallet", (req, res) => {
+  wallet = BankWallet.createWallet();
+  const transaction = BANKWALLET.createDepositTransactions({
+    amount: 1000,
+    recipient: wallet.publicKey,
+  });
+  transactionMiner = new TransactionMiner({
+    blockchain,
+    transactionPool,
+    wallet,
+    pubsub,
+  });
+  transactionPool.setTransaction(transaction);
+  pubsub.broadcastTransaction(transaction);
+  res.redirect("/api/wallet-info");
+});
 
 app.get("/", (req, res) => {
   res.send({ getBlockchain: "/api/blocks", mineBlock: "/api/mine" });
@@ -52,7 +64,7 @@ app.get("/api/transaction-pool-map", (req, res) => {
   res.send(transactionPool.transactionMap);
 });
 
-app.post("/api/transact", (req, res) => {
+app.post("/api/user/transact", (req, res) => {
   const { amount, recipient } = req.body;
   let transaction = transactionPool.existingTransaction({
     inputAddress: wallet.publicKey,
@@ -92,7 +104,7 @@ app.get("/api/wallet-info", (req, res) => {
   });
 });
 
-app.post(`${ROOT_NODE}/api/deposit`, (req, res) => {
+app.post(`${ROOT_NODE}/api/BANK/deposit`, (req, res) => {
   const { amount, recipient } = req.body;
   let transaction = transactionPool.existingTransaction({
     inputAddress: BANKWALLET.publicKey,
@@ -104,7 +116,6 @@ app.post(`${ROOT_NODE}/api/deposit`, (req, res) => {
       transaction = BANKWALLET.createDepositTransactions({
         recipient,
         amount,
-        chain: blockchain.chain,
       });
     }
   } catch (error) {
