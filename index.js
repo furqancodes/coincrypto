@@ -28,7 +28,7 @@ setTimeout(() => {
 
 app.use(express.json());
 
-app.get("/api/BANK/create-wallet", (req, res) => {
+app.post("/api/createwallet", (req, res) => {
   wallet = BankWallet.createWallet();
   const transaction = BANKWALLET.createDepositTransactions({
     amount: 1000,
@@ -42,29 +42,14 @@ app.get("/api/BANK/create-wallet", (req, res) => {
   });
   transactionPool.setTransaction(transaction);
   pubsub.broadcastTransaction(transaction);
-  res.redirect("/api/wallet-info");
+  res.redirect("/api/walletinfo");
 });
 
-app.get("/", (req, res) => {
-  res.send({ getBlockchain: "/api/blocks", mineBlock: "/api/mine" });
-});
-
-app.get("/api/blocks", (req, res) => {
+app.get("/api/blockchain", (req, res) => {
   res.send(blockchain.chain);
 });
 
-app.post("/api/mine", (req, res) => {
-  const { data } = req.body;
-  blockchain.addBlock({ data });
-  pubsub.broadcastChain();
-  res.redirect("/api/blocks");
-});
-
-app.get("/api/transaction-pool-map", (req, res) => {
-  res.send(transactionPool.transactionMap);
-});
-
-app.post("/api/user/transact", (req, res) => {
+app.post("/api/transact", (req, res) => {
   const { amount, recipient } = req.body;
   let transaction = transactionPool.existingTransaction({
     inputAddress: wallet.publicKey,
@@ -85,23 +70,44 @@ app.post("/api/user/transact", (req, res) => {
   transactionPool.setTransaction(transaction);
   pubsub.broadcastTransaction(transaction);
 
-  res.json({ type: "SUCCESSFULL TRANSACTION", message: transaction });
+  res.json({
+    type: "SUCCESSFULL TRANSACTION",
+    message: transaction,
+    balance: wallet.balance,
+  });
+});
+
+app.get("/api/walletinfo", (req, res) => {
+  const address = wallet.publicKey;
+  res.send({
+    address,
+    balance: Wallet.calculateBalance({ chain: blockchain.chain, address }),
+    transactions: Wallet.walletTransactions({
+      wallet,
+      chain: blockchain.chain,
+    }),
+  });
+});
+// =====================================================
+// -----------------------------------------------------------------
+app.get("/", (req, res) => {
+  res.send({ getBlockchain: "/api/blocks", mineBlock: "/api/mine" });
+});
+
+app.post("/api/mine", (req, res) => {
+  const { data } = req.body;
+  blockchain.addBlock({ data });
+  pubsub.broadcastChain();
+  res.redirect("/api/blocks");
+});
+
+app.get("/api/transaction-pool-map", (req, res) => {
+  res.send(transactionPool.transactionMap);
 });
 
 app.get("/api/mine-transactions", (req, res) => {
   transactionMiner.mineTranaction();
-  res.redirect("/api/blocks");
-});
-
-app.get("/api/wallet-info", (req, res) => {
-  const address = wallet.publicKey;
-  console.log(`process.env.port : ${process.env.PORT}`);
-  console.log(`root Node : ${ROOT_NODE}`);
-  res.send({
-    process: process.env.PORT,
-    address,
-    balance: Wallet.calculateBalance({ chain: blockchain.chain, address }),
-  });
+  res.redirect("/api/blockchain");
 });
 
 app.post(`${ROOT_NODE}/api/BANK/deposit`, (req, res) => {
