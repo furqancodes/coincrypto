@@ -28,7 +28,7 @@ setTimeout(() => {
 
 app.use(express.json());
 
-app.post("/api/createwallet", (req, res) => {
+app.get("/api/createwallet", (req, res) => {
   wallet = BankWallet.createWallet();
   const transaction = BANKWALLET.createDepositTransactions({
     amount: 1000,
