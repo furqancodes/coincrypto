@@ -42,7 +42,7 @@ app.post("/api/createwallet", (req, res) => {
   });
   transactionPool.setTransaction(transaction);
   pubsub.broadcastTransaction(transaction);
-  res.redirect("/api/walletinfo");
+  res.send(wallet.keyPair).redirect("/api/walletinfo");
 });
 
 app.get("/api/blockchain", (req, res) => {
