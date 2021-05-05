@@ -2,14 +2,14 @@ const request = require("request");
 const express = require("express");
 const Blockchain = require("./blockchain/index");
 const PubSub = require("./app/pubsub");
-const Transactionpool = require("./wallet/transaction-pool");
+const TransactionPool = require("./wallet/transaction-pool");
 const Wallet = require("./wallet");
 const BankWallet = require("./wallet/BankWallet");
 const TransactionMiner = require("./app/transaction-miner");
 
 const app = express();
 const blockchain = new Blockchain();
-const transactionPool = new Transactionpool();
+const transactionPool = new TransactionPool();
 let wallet;
 const BANKWALLET = new BankWallet();
 const pubsub = new PubSub({ wallet, blockchain, transactionPool });
@@ -30,7 +30,7 @@ app.use(express.json());
 
 app.post("/api/createwallet", (req, res) => {
   wallet = BankWallet.createWallet();
-  const transaction = BANKWALLET.createDepositTransactions({
+  const transaction = BANKWALLET.createDepositTransaction({
     amount: 1000,
     recipient: wallet.publicKey,
   });
@@ -59,7 +59,7 @@ app.post("/api/transact", (req, res) => {
     if (transaction) {
       transaction.update({ senderWallet: wallet, recipient, amount });
     } else {
-      transaction = wallet.createTransactions({
+      transaction = wallet.createTransaction({
         recipient,
         amount,
         chain: blockchain.chain,
@@ -72,7 +72,7 @@ app.post("/api/transact", (req, res) => {
   pubsub.broadcastTransaction(transaction);
 
   res.json({
-    type: "SUCCESSFULL TRANSACTION",
+    type: "SUCCESSFUL TRANSACTION",
     message: transaction,
     balance: wallet.balance,
   });
@@ -89,8 +89,9 @@ app.get("/api/walletinfo", (req, res) => {
     }),
   });
 });
+
 // =====================================================
-// -----------------------------------------------------------------
+
 app.get("/", (req, res) => {
   res.send({ getBlockchain: "/api/blocks", mineBlock: "/api/mine" });
 });
@@ -107,7 +108,7 @@ app.get("/api/transaction-pool-map", (req, res) => {
 });
 
 app.get("/api/mine-transactions", (req, res) => {
-  transactionMiner.mineTranaction();
+  transactionMiner.mineTransaction();
   res.redirect("/api/blockchain");
 });
 
@@ -120,7 +121,7 @@ app.post(`${ROOT_NODE}/api/BANK/deposit`, (req, res) => {
     if (transaction) {
       transaction.update({ senderWallet: BANKWALLET, recipient, amount });
     } else {
-      transaction = BANKWALLET.createDepositTransactions({
+      transaction = BANKWALLET.createDepositTransaction({
         recipient,
         amount,
       });
@@ -148,7 +149,7 @@ const syncRoot = () => {
       if (!err && res.statusCode === 200) {
         const rootTransactionPoolMap = JSON.parse(body);
         console.log(
-          `replace transaction poolmap on a sync with ${rootTransactionPoolMap}`
+          `replace transaction pool map on a sync with ${rootTransactionPoolMap}`
         );
         transactionPool.setMap(rootTransactionPoolMap);
       }

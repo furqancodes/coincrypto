@@ -1,13 +1,13 @@
-const Transactions = require("./transactions");
+const Transaction = require("./transaction");
 const Wallet = require("./index");
-const Transactionpool = require("./transaction-pool.js");
+const TransactionPool = require("./transaction-pool.js");
 const Blockchain = require("../blockchain");
-describe("Transactionpool", () => {
+describe("TransactionPool", () => {
   let transactionPool, transaction, senderWallet;
   beforeEach(() => {
-    transactionPool = new Transactionpool();
+    transactionPool = new TransactionPool();
     senderWallet = new Wallet();
-    transaction = new Transactions({
+    transaction = new Transaction({
       senderWallet,
       recipient: "a fake recipient",
       amount: 125,
@@ -30,11 +30,11 @@ describe("Transactionpool", () => {
     });
   });
   describe("validTransactions()", () => {
-    let validtransactions;
+    let validTransactions;
     beforeEach(() => {
-      validtransactions = [];
+      validTransactions = [];
       for (let i = 0; i < 10; i++) {
-        transaction = new Transactions({
+        transaction = new Transaction({
           senderWallet,
           recipient: "annypoop",
           amount: 30,
@@ -44,13 +44,13 @@ describe("Transactionpool", () => {
         } else if (i % 3 === 1) {
           transaction.input.signature = new Wallet().sign("foo");
         } else {
-          validtransactions.push(transaction);
+          validTransactions.push(transaction);
         }
         transactionPool.setTransaction(transaction);
       }
     });
     it("returns valid transaction", () => {
-      expect(transactionPool.validTransactions()).toEqual(validtransactions);
+      expect(transactionPool.validTransactions()).toEqual(validTransactions);
     });
   });
   describe("setMap", () => {
@@ -94,7 +94,7 @@ describe("Transactionpool", () => {
       for (let i = 0; i < 6; i++) {
         const walletNew = new Wallet();
         walletNew.balance = 1000;
-        const transaction = walletNew.createTransactions({
+        const transaction = walletNew.createTransaction({
           recipient: "foo",
           amount: 20,
         });

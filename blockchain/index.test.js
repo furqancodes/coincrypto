@@ -2,7 +2,7 @@ const Blockchain = require("./index.js");
 const block = require("./block");
 const cryptoHash = require("../utils/cryptoHash.js");
 const Wallet = require("../wallet");
-const Transaction = require("../wallet/transactions");
+const Transaction = require("../wallet/transaction");
 describe("blockchain", () => {
   let blockchain, newChain, orginalChain, errorMock;
   beforeEach(() => {
@@ -138,7 +138,7 @@ describe("blockchain", () => {
     beforeEach(() => {
       wallet = new Wallet();
       wallet.balance = 1000;
-      transaction = wallet.createTransactions({
+      transaction = wallet.createTransaction({
         recipient: "foo-address",
         amount: 0,
       });

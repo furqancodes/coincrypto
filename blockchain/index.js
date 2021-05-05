@@ -1,6 +1,6 @@
 const Block = require("./block");
 const cryptoHash = require("../utils/cryptoHash.js");
-const Transaction = require("../wallet/transactions");
+const Transaction = require("../wallet/transaction");
 const { REWARD_ADDRESS, MINING_REWARD } = require("../config");
 const Wallet = require("../wallet");
 
@@ -51,7 +51,7 @@ class Blockchain {
             return false;
           }
         } else {
-          if (!Transaction.validtransactions(transaction)) {
+          if (!Transaction.validTransaction(transaction)) {
             console.error("Invalid transaction");
             return false;
           }

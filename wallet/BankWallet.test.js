@@ -2,13 +2,16 @@ const Wallet = require("./index");
 const BankWallet = require("./BankWallet");
 const Blockchain = require("../blockchain");
 
-const Transactions = require("./transactions");
+const Transaction = require("./transaction");
 
-describe("BankWAllet", () => {
+describe("BankWallet", () => {
+  let wallet, BANKWALLET
+
   beforeEach(() => {
     BANKWALLET = new BankWallet();
     wallet = new Wallet();
   });
+
   describe("createWallet", () => {
     it("creates a new wallet", () => {
       const newWallet = BankWallet.createWallet();
@@ -19,14 +22,14 @@ describe("BankWAllet", () => {
   describe("createDepositTransaction()", () => {
     describe("amount is valid", () => {
       let transaction, amount;
-      let orginalBalance, blockchain;
+      let orginalBalance, blockchain, orginalBankWalletBalance;
       beforeEach(() => {
-        orginaBankWalletBalance = BANKWALLET.balance;
+        orginalBankWalletBalance = BANKWALLET.balance;
         wallet.balance = 1000;
         orginalBalance = 0;
         amount = 1024;
         blockchain = new Blockchain();
-        transaction = BANKWALLET.createDepositTransactions({
+        transaction = BANKWALLET.createDepositTransaction({
           amount,
           recipient: wallet.publicKey,
           chain: blockchain.chain,
@@ -34,7 +37,7 @@ describe("BankWAllet", () => {
         blockchain.addBlock({ data: [transaction] });
       });
       it("creates an instance of `Transaction`", () => {
-        expect(transaction instanceof Transactions).toBe(true);
+        expect(transaction instanceof Transaction).toBe(true);
       });
       it("matches the transaction input with the Bankwallet", () => {
         expect(transaction.input.address).toEqual(BANKWALLET.publicKey);
@@ -56,7 +59,7 @@ describe("BankWAllet", () => {
             chain: blockchain.chain,
             address: BANKWALLET.publicKey,
           })
-        ).toEqual(orginaBankWalletBalance - amount);
+        ).toEqual(orginalBankWalletBalance - amount);
       });
     });
   });

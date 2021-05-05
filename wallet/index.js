@@ -1,7 +1,7 @@
 const { STARTING_BALANCE } = require("../config");
 const { ec } = require("../utils");
 const cryptoHash = require("../utils/cryptoHash");
-const Transactions = require("./transactions");
+const Transaction = require("./transaction");
 
 class Wallet {
   constructor() {
@@ -9,10 +9,12 @@ class Wallet {
     this.balance = STARTING_BALANCE;
     this.publicKey = this.keyPair.getPublic().encode("hex");
   }
+
   sign(data) {
     return this.keyPair.sign(cryptoHash(data));
   }
-  createTransactions({ amount, recipient, chain }) {
+
+  createTransaction({ amount, recipient, chain }) {
     if (chain) {
       this.balance = Wallet.calculateBalance({
         chain,
@@ -22,13 +24,14 @@ class Wallet {
     if (amount > this.balance) {
       throw new Error("amount exceeds balance");
     }
-    const transaction = new Transactions({
+    const transaction = new Transaction({
       senderWallet: this,
       amount,
       recipient,
     });
     return transaction;
   }
+
   static walletTransactions({ wallet, chain }) {
     let transactions = [];
     console.log("before first loop");

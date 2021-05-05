@@ -7,6 +7,7 @@ const credentials = {
   subscribeKey: process.env.SUBSCRIBEKEY,
   secretKey: process.env.SECRETKEY,
 };
+
 const CHANNELS = {
   TEST: "TEST",
   BLOCKCHAIN: "BLOCKCHAIN",
@@ -28,7 +29,7 @@ class PubSub {
     return {
       message: (msgObj) => {
         const { channel, message } = msgObj;
-        console.log(`SUCEESSfully conncected to ${channel} channel`, channel);
+        console.log(`successfully connected to ${channel} channel`, channel);
         console.table(`message------------------${message}`);
         const parsedMessage = JSON.parse(message);
         switch (channel) {
@@ -62,7 +63,7 @@ class PubSub {
   publish({ channel, message }) {
     this.pubnub
       .publish({ channel, message })
-      .then(() => console.log("sucessful"))
+      .then(() => console.log("successful"))
       .catch((err) => console.error(err));
   }
   broadcastChain() {

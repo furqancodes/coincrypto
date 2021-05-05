@@ -1,6 +1,6 @@
 const Wallet = require("./index");
 const { verifySignature } = require("../utils");
-const Transactions = require("./transactions");
+const Transaction = require("./transaction");
 const Blockchain = require("../blockchain");
 const { STARTING_BALANCE } = require("../config");
 describe("Wallet", () => {
@@ -41,7 +41,7 @@ describe("Wallet", () => {
     describe("and the amount exceeds the balance", () => {
       it("throws the eror", () => {
         expect(() => {
-          wallet.createTransactions({
+          wallet.createTransaction({
             amount: 9090,
             recipient: "some wrong address",
           });
@@ -53,10 +53,10 @@ describe("Wallet", () => {
       beforeEach(() => {
         amount = 500;
         recipient = "some nice guy";
-        transaction = wallet.createTransactions({ amount, recipient });
+        transaction = wallet.createTransaction({ amount, recipient });
       });
       it("creates an instance of `Transaction`", () => {
-        expect(transaction instanceof Transactions).toBe(true);
+        expect(transaction instanceof Transaction).toBe(true);
       });
       it("matches the transaction input with the wallet", () => {
         expect(transaction.input.address).toEqual(wallet.publicKey);
@@ -70,7 +70,7 @@ describe("Wallet", () => {
         const calculateBalanceMock = jest.fn();
         const orginalCalculateBalance = Wallet.calculateBalance;
         Wallet.calculateBalance = calculateBalanceMock;
-        wallet.createTransactions({
+        wallet.createTransaction({
           recipient: "fooo",
           amount: 50,
           chain: new Blockchain().chain,
@@ -107,15 +107,15 @@ describe("Wallet", () => {
         walletthree.balance = 1000;
         walletfour = new Wallet();
         walletfour.balance = 1000;
-        transactionOne = walletOne.createTransactions({
+        transactionOne = walletOne.createTransaction({
           recipient: wallet.publicKey,
           amount: 30,
         });
-        transactionTwo = walletTwo.createTransactions({
+        transactionTwo = walletTwo.createTransaction({
           recipient: wallet.publicKey,
           amount: 400,
         });
-        transactionThree = walletthree.createTransactions({
+        transactionThree = walletthree.createTransaction({
           recipient: walletfour.publicKey,
           amount: 200,
         });
@@ -138,7 +138,7 @@ describe("Wallet", () => {
       describe("and the wallet has made transaction", () => {
         let recentTransaction;
         beforeEach(() => {
-          recentTransaction = wallet.createTransactions({
+          recentTransaction = wallet.createTransaction({
             recipient: "foo-address",
             amount: 20,
           });
@@ -155,11 +155,11 @@ describe("Wallet", () => {
         describe("and there are outputs next to and after the recent transaction", () => {
           let sameBlockTransaction, nextBlockTransction;
           beforeEach(() => {
-            recentTransaction = wallet.createTransactions({
+            recentTransaction = wallet.createTransaction({
               recipient: "saome later foo address",
               amount: 90,
             });
-            sameBlockTransaction = Transactions.rewardTransaction({
+            sameBlockTransaction = Transaction.rewardTransaction({
               minerWallet: wallet,
             });
             blockchain.addBlock({
@@ -167,7 +167,7 @@ describe("Wallet", () => {
             });
             const someWallet = new Wallet();
             someWallet.balance = 1000;
-            nextBlockTransction = someWallet.createTransactions({
+            nextBlockTransction = someWallet.createTransaction({
               recipient: wallet.publicKey,
               amount: 400,
             });

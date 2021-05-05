@@ -1,10 +1,10 @@
-const { v1: uuidv1 } = require("uuid");
+const { v1: uuid } = require("uuid");
 const { verifySignature } = require("../utils");
 const { MINING_REWARD, REWARD_ADDRESS } = require("../config");
 
-class Transactions {
+class Transaction {
   constructor({ senderWallet, recipient, amount, input, outputMap }) {
-    this.id = uuidv1();
+    this.id = uuid();
     this.outputMap =
       outputMap ||
       this.createOutputMap({
@@ -15,12 +15,14 @@ class Transactions {
     this.input =
       input || this.createInput({ senderWallet, outputMap: this.outputMap });
   }
+
   createOutputMap({ senderWallet, recipient, amount }) {
     const outputMap = {};
     outputMap[recipient] = parseInt(amount, 10);
     outputMap[senderWallet.publicKey] = senderWallet.balance - amount;
     return outputMap;
   }
+
   createInput({ senderWallet, outputMap }) {
     return {
       timestamp: Date.now(),
@@ -29,6 +31,7 @@ class Transactions {
       signature: senderWallet.sign(outputMap),
     };
   }
+
   update({ senderWallet, recipient, amount }) {
     if (amount > this.outputMap[senderWallet.publicKey]) {
       throw new Error("Amount exceeds balance");
@@ -43,7 +46,8 @@ class Transactions {
       this.outputMap[senderWallet.publicKey] - amount;
     this.input = this.createInput({ senderWallet, outputMap: this.outputMap });
   }
-  static validtransactions(transaction) {
+
+  static validTransaction(transaction) {
     const { input, outputMap } = transaction;
     const { amount, address, signature } = input;
     const outputTotal = Object.values(outputMap).reduce(
@@ -64,4 +68,4 @@ class Transactions {
     });
   }
 }
-module.exports = Transactions;
+module.exports = Transaction;
