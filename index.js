@@ -28,7 +28,7 @@ setTimeout(() => {
 
 app.use(express.json());
 
-app.get("/api/createwallet", (req, res) => {
+app.post("/api/createwallet", (req, res) => {
   wallet = BankWallet.createWallet();
   const transaction = BANKWALLET.createDepositTransactions({
     amount: 1000,
@@ -42,7 +42,8 @@ app.get("/api/createwallet", (req, res) => {
   });
   transactionPool.setTransaction(transaction);
   pubsub.broadcastTransaction(transaction);
-  res.send(wallet.keyPair).redirect("/api/walletinfo");
+  console.log("created");
+  res.send(wallet.publicKey);
 });
 
 app.get("/api/blockchain", (req, res) => {
