@@ -4,8 +4,8 @@ const cryptoHash = require("../utils/cryptoHash");
 const Transaction = require("./transaction");
 
 class Wallet {
-  constructor() {
-    this.keyPair = ec.genKeyPair();
+  constructor(privateKey) {
+    // this.keyPair = privateKey ? privateeKey.genkeypair : ec.genKeyPair();
     this.balance = STARTING_BALANCE;
     this.publicKey = this.keyPair.getPublic().encode("hex");
   }
@@ -34,14 +34,10 @@ class Wallet {
 
   static walletTransactions({ wallet, chain }) {
     let transactions = [];
-    console.log("before first loop");
     for (let i = 1; i < chain.length; i++) {
-      console.log("after first loop");
-
       let { data } = chain[i];
       for (let j = 0; j < data.length; j++) {
         const { outputMap } = data[j];
-        console.log("wallet pUblic ktu : ", wallet.publicKey);
         if (outputMap[wallet.publicKey]) {
           transactions.push(data[j]);
         }

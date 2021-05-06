@@ -4,14 +4,15 @@ const Blockchain = require("./blockchain/index");
 const PubSub = require("./app/pubsub");
 const TransactionPool = require("./wallet/transaction-pool");
 const Wallet = require("./wallet");
-const BankWallet = require("./wallet/BankWallet");
 const TransactionMiner = require("./app/transaction-miner");
+const WalletUser = require("./db/models/WalletUsers");
 
 const app = express();
 const blockchain = new Blockchain();
 const transactionPool = new TransactionPool();
 let wallet;
-const BANKWALLET = new BankWallet();
+let BANKWALLET = new Wallet(process.env.BANKWALLETprivateKey);
+
 const pubsub = new PubSub({ wallet, blockchain, transactionPool });
 let transactionMiner;
 
@@ -30,6 +31,11 @@ app.use(express.json());
 
 app.post("/api/createwallet", (req, res) => {
   wallet = BankWallet.createWallet();
+  const newWalletUser = new WalletUser({
+    publicKey: wallet.publicKey,
+    balance: wallet.balance,
+    privateKey: wallet.privateKey,
+  });
   const transaction = BANKWALLET.createDepositTransaction({
     amount: 1000,
     recipient: wallet.publicKey,
@@ -43,6 +49,7 @@ app.post("/api/createwallet", (req, res) => {
   transactionPool.setTransaction(transaction);
   pubsub.broadcastTransaction(transaction);
   console.log("created");
+  newWalletUser.save();
   res.send(wallet.publicKey);
 });
 
@@ -51,7 +58,7 @@ app.get("/api/blockchain", (req, res) => {
 });
 
 app.post("/api/transact", (req, res) => {
-  const { amount, recipient } = req.body;
+  const { amount, recipient, publicKey } = req.body;
   let transaction = transactionPool.existingTransaction({
     inputAddress: wallet.publicKey,
   });
@@ -89,7 +96,14 @@ app.get("/api/walletinfo", (req, res) => {
     }),
   });
 });
-
+app.get("/api/login", (req, res) => {
+  walletuser = WalletUser.findOne(req.publicKey);
+  const wallet = new Wallet(
+    walletuser.publicKey,
+    walletuser.privateKey,
+    walletuser.balance
+  );
+});
 // =====================================================
 
 app.get("/", (req, res) => {

@@ -4,10 +4,14 @@ const Transaction = require("./transaction");
 const Wallet = require("./index");
 
 class BankWallet {
-  constructor() {
+  constructor(privateKey) {
+    this.key = ec.keyFromPrivate(privateKey);
+    console.log("🚀 key", this.key);
     this.keyPair = ec.genKeyPair();
+    console.log("🚀 keyPair", this.keyPair);
     this.balance = 0;
     this.publicKey = this.keyPair.getPublic().encode("hex");
+    // this.privatekey = this.keyPair.getPrivate().toString();
   }
 
   sign(data) {
