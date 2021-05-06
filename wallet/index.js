@@ -2,30 +2,32 @@ const { STARTING_BALANCE } = require("../config");
 const { ec } = require("../utils");
 const cryptoHash = require("../utils/cryptoHash");
 const Transaction = require("./transaction");
+require("dotenv").config();
 
 class Wallet {
   constructor(privateKey) {
-    // this.keyPair = privateKey ? privateeKey.genkeypair : ec.genKeyPair();
+    this.keyPair = privateKey ? ec.keyFromPrivate(privateKey) : ec.genKeyPair();
     this.balance = STARTING_BALANCE;
     this.publicKey = this.keyPair.getPublic().encode("hex");
+    this.PrivateKey = this.keyPair.getPrivate().toString("hex");
   }
 
   sign(data) {
     return this.keyPair.sign(cryptoHash(data));
   }
 
-  createTransaction({ amount, recipient, chain }) {
-    if (chain) {
-      this.balance = Wallet.calculateBalance({
-        chain,
-        address: this.publicKey,
-      });
-    }
-    if (amount > this.balance) {
-      throw new Error("amount exceeds balance");
-    }
+  static createTransaction({ senderWallet, amount, recipient, chain }) {
+    // if () {
+    //   senderWallet.balance = Wallet.calculateBalance({
+    //     chain,
+    //     address: senderWallet.publicKey,
+    //   });
+    // }
+    // if (amount > this.balance) {
+    //   throw new Error("amount exceeds balance");
+    // }
     const transaction = new Transaction({
-      senderWallet: this,
+      senderWallet,
       amount,
       recipient,
     });

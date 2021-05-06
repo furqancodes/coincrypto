@@ -3,6 +3,7 @@ const { verifySignature } = require("../utils");
 const Transaction = require("./transaction");
 const Blockchain = require("../blockchain");
 const { STARTING_BALANCE } = require("../config");
+
 describe("Wallet", () => {
   let wallet;
   beforeEach(() => {
