@@ -1,4 +1,4 @@
-const Transaction = require("./transaction");
+const Transaction = require("./Transaction");
 const Wallet = require("../Wallet");
 const TransactionPool = require("./TransactionPool");
 const Blockchain = require("../blockchain/Blockchain");

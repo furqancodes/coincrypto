@@ -1,7 +1,7 @@
 const Blockchain = require("./Blockchain");
 const Block = require("./Block");
 const { cryptoHash } = require("../utils");
-const Wallet = require("../wallet");
+const Wallet = require("../Wallet");
 const Transaction = require("../transaction/Transaction");
 describe("blockchain", () => {
   let blockchain, newChain, originalChain, errorMock;
