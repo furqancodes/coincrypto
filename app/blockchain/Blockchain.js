@@ -3,6 +3,7 @@ const { cryptoHash } = require("../utils");
 const Transaction = require("../transaction/Transaction");
 const { REWARD_ADDRESS, MINING_REWARD, BANK_WALLET } = require("../../config");
 const Wallet = require("../Wallet");
+const assert = require("assert");
 
 class Blockchain {
   constructor() {
@@ -85,28 +86,36 @@ class Blockchain {
   }
 
   validateBlock(block, pool) {
-    lasthash = this.chain.lasthash;
-    isValid = validateBlockHash(block, lasthash);
+    const hash = this.chain[this.chain.length - 1].hash;
+    const isValid = validateBlockHash(block, hash);
 
     // blockTransactions = [1,2,3,4,5,6,7,8,9]
 
-    blockTransactions = block.data.transactions;
-    minerTrans = block.data.transactions.pop();
-
+    const blockTransactions = block.data.pop();
+    const minerTrans = block.data.slice(block.data.length - 1);
     assert.deepStrictEqual(
       blockTransactions,
       pool.slice(0, blockTransactions.length)
     );
 
-    minerTras.from === BANK_WALLET;
-    minreTrans.amount === MAX_REWARD;
-
-    this.chain.push(block);
-
-    broadCast(block);
+    const isBank = minerTrans.input === REWARD_ADDRESS;
+    const isRewardAmount = minreTrans.amount === MINING_REWARD;
+    if (isValid && isBank && isRewardAmount) {
+      this.chain.push(block);
+      broadCast(block);
+    }
   }
 
-  validateBlockHash() {}
+  validateBlockHash({ block, hash }) {
+    const realHash = cryptoHash(
+      block.difficulty,
+      block.nonce,
+      block.data,
+      block.lastHash,
+      block.timestamp
+    );
+    realHash === hash ? true : false;
+  }
 
   static isValidChain(chain) {
     if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis())) {
