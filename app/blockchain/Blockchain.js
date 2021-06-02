@@ -8,6 +8,7 @@ const assert = require("assert");
 class Blockchain {
   constructor() {
     this.chain = [Block.genesis()];
+    this.tempBlock;
   }
 
   addBlock({ data }) {
@@ -86,27 +87,25 @@ class Blockchain {
   }
 
   validateBlock(block, pool) {
-    const hash = this.chain[this.chain.length - 1].hash;
-    const isValid = validateBlockHash(block, hash);
-
-    // blockTransactions = [1,2,3,4,5,6,7,8,9]
+    const isValid = this.validateBlockHash({ block });
 
     const blockTransactions = block.data.pop();
-    const minerTrans = block.data.slice(block.data.length - 1);
+
+    const minerTrans = block.data.slice(block.data.length - 2);
+    const isBank = minerTrans.input === REWARD_ADDRESS;
+    const isRewardAmount = minerTrans.amount === MINING_REWARD;
+
     assert.deepStrictEqual(
       blockTransactions,
       pool.slice(0, blockTransactions.length)
     );
 
-    const isBank = minerTrans.input === REWARD_ADDRESS;
-    const isRewardAmount = minreTrans.amount === MINING_REWARD;
     if (isValid && isBank && isRewardAmount) {
       this.chain.push(block);
-      broadCast(block);
     }
   }
 
-  validateBlockHash({ block, hash }) {
+  validateBlockHash({ block }) {
     const realHash = cryptoHash(
       block.difficulty,
       block.nonce,
@@ -114,7 +113,10 @@ class Blockchain {
       block.lastHash,
       block.timestamp
     );
-    realHash === hash ? true : false;
+    block.hash === realHash ? true : false;
+  }
+  setBlock({ timestamp, lastHash, hash, data, nonce, difficulty }) {
+    this.tempBlock({ timestamp, lastHash, hash, data, nonce, difficulty });
   }
 
   static isValidChain(chain) {
