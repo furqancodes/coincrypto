@@ -8,7 +8,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "dev-peer": "cross-env GENERATE_PEER_PORT='true' ENV='development' nodemon index.js",
-    "lint": "./node_modules/.bin/eslint ./ --fix"
+    "lint": "node_modules\\.bin\\eslint ./ --fix"
   },
   "jest": {
     "testEnvironment": "node"

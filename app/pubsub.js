@@ -1,34 +1,34 @@
-const PubNub = require("pubnub");
+const PubNub = require('pubnub')
 
-const config = require("../config");
+const config = require('../config')
 
-const credentials = config.PUBNUB;
+const credentials = config.PUBNUB
 
 const CHANNELS = {
-  TEST: "TEST",
-  TRANSACTION: "TRANSACTION",
-  BLOCK: "BLOCK",
-};
+  TEST: 'TEST',
+  TRANSACTION: 'TRANSACTION',
+  BLOCK: 'BLOCK',
+}
 
 class Pubsub {
-  constructor({ transactionPool, wallet, block, method }) {
-    this.block = block;
-    this.wallet = wallet;
-    this.method = method;
-    this.transactionPool = transactionPool;
-    this.pubnub = new PubNub(credentials);
+  constructor({transactionPool, wallet, block, method}) {
+    this.block = block
+    this.wallet = wallet
+    this.method = method
+    this.transactionPool = transactionPool
+    this.pubnub = new PubNub(credentials)
     this.pubnub.subscribe({
       channels: [Object.values(CHANNELS)],
-    });
-    this.pubnub.addListener(this.listener());
+    })
+    this.pubnub.addListener(this.listener())
   }
   listener() {
     return {
       message: (msg) => {
-        const { channel, message } = msg;
-        console.log(`successfully connected to ${channel} channel`, channel);
-        console.log(`message ${message}`);
-        const parsedMessage = JSON.parse(message);
+        const {channel, message} = msg
+        console.log(`successfully connected to ${channel} channel`, channel)
+        console.log(`message ${message}`)
+        const parsedMessage = JSON.parse(message)
         switch (channel) {
           case CHANNELS.TRANSACTION:
             if (
@@ -36,44 +36,44 @@ class Pubsub {
                 inputAddress: this.wallet.publicKey,
               })
             ) {
-              this.transactionPool.setTransaction(parsedMessage);
+              this.transactionPool.setTransaction(parsedMessage)
             }
-            break;
+            break
           case CHANNELS.BLOCK:
-            const verifiedBlock = this.method(this.block);
+            const verifiedBlock = this.method(this.block)
             if (verifiedBlock) {
-              this.block.setblock(verifiedBlock);
+              this.block.setblock(verifiedBlock)
             }
-            break;
+            break
           default:
-            break;
+            break
         }
       },
-    };
+    }
   }
   subscribeToChannel() {
     this.pubnub.subscribe({
       channels: [Object.values(CHANNELS)],
-    });
+    })
   }
-  publish({ channel, message }) {
+  publish({channel, message}) {
     this.pubnub
-      .publish({ channel, message })
-      .then(() => console.log("successful"))
-      .catch((err) => console.error(err));
+      .publish({channel, message})
+      .then(() => console.log('successful'))
+      .catch(err => console.error(err))
   }
-  broadcastBlock({ block }) {
+  broadcastBlock({block}) {
     this.publish({
       channel: CHANNELS.BLOCKCHAIN,
       message: JSON.stringify(block),
-    });
+    })
   }
   broadcastTransaction(transaction) {
     this.publish({
       channel: CHANNELS.TRANSACTION,
       message: JSON.stringify(transaction),
-    });
+    })
   }
 }
 
-module.exports = Pubsub;
+module.exports = Pubsub
