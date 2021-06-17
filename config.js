@@ -12,8 +12,9 @@ module.exports = {
   MINE_RATE: 3000,
   STARTING_BALANCE: 0,
   BANK_WALLET: {
-    privateKey: process.env.bank_wallet_private_key || '1',
-    publicKey: process.env.bank_wallet_public_key || '2',
+    privateKey: process.env.bank_wallet_private_key || '38d22e371e7176bcdf4281c4798e9c55457d438179940f19414d7d00780669d5',
+    publicKey: process.env.bank_wallet_public_key ||
+      '047c08ba522a3a3abc136611b13cad4ac422ba87226d85e7292f621dce2bb45b937b909dcb4eb5183f7b0b583f01f7a98d8b3f944976b720776a717f1a0a71a517',
   },
   DEFAULT_PORT: 3000,
   isDevelopment: process.env.ENV === 'development',
@@ -26,5 +27,14 @@ module.exports = {
       process.env.SECRET_KEY ||
       'sec-c-ZDdiNGEwMGMtMTJkYS00MWJjLWFmM2QtNTYzMDMzZmIwNmRk',
   },
-  url: 'https://cyrpto.herokuapp.com/blockchain',
+  url: 'http://localhost:3000/blockchain',
+  APP: {
+    CHANNELS: ['unconfirmed-blocks'],
+  },
+  MINER: {
+    CHANNELS: ['transactions', 'confirmed-blocks'],
+  },
+  DATABASE: {
+    URL: 'mongodb+srv://admin:W5uvoBSmjFpM1faE@cluster0.lfwbr.mongodb.net/cryptochain?retryWrites=true&w=majority',
+  },
 }
