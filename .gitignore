@@ -3,3 +3,4 @@ coverage/
 actions-runner/
 sidechecking.js
 .env
+.vscode/settings.json
