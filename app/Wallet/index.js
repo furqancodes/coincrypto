@@ -2,8 +2,7 @@ const {STARTING_BALANCE} = require('../../config')
 const {ec} = require('../utils')
 const {cryptoHash} = require('../utils')
 const Transaction = require('../transaction/Transaction')
-require('dotenv').config()
-
+const {BANK_WALLET} = require('../../config')
 class Wallet {
   constructor(privateKey) {
     this.keyPair = privateKey ? ec.keyFromPrivate(privateKey) : ec.genKeyPair()
@@ -21,7 +20,10 @@ class Wallet {
       chain,
       address: senderWallet.publicKey,
     })
-    if (amount > senderWallet.balance) {
+    if (
+      amount > senderWallet.balance &&
+      senderWallet.publicKey !== BANK_WALLET.publicKey
+    ) {
       throw new Error('amount exceeds balance')
     }
     const transaction = new Transaction({

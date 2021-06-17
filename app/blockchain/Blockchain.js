@@ -1,4 +1,3 @@
-const assert = require('assert')
 
 const Block = require('./Block')
 const {cryptoHash} = require('../utils')
@@ -9,7 +8,6 @@ const Wallet = require('../Wallet')
 class Blockchain {
   constructor() {
     this.chain = [Block.genesis()]
-    this.tempBlock
   }
 
   addBlock({data}) {
@@ -18,6 +16,7 @@ class Blockchain {
       data,
     })
     this.chain.push(newBlock)
+    return newBlock
   }
 
   replaceChain(chain, validateTransactions, onSuccess) {
@@ -87,37 +86,41 @@ class Blockchain {
     return true
   }
 
-  validateBlock(block, pool) {
-    const isValid = this.validateBlockHash({block})
+  lastBlockHash() {
+    return this.chain[this.chain.length - 1].hash
+  }
 
-    const blockTransactions = block.data.pop()
+  validateAndAddBlock(block, transactionPool) {
+    const validTransaction = transactionPool.validTransactions()
+    const rewardTransaction = block.data.pop()
+    const data = validTransaction.slice(validTransaction.length - block.data.length)
+    data.push(rewardTransaction)
 
-    const minerTrans = block.data.slice(block.data.length - 2)
-    const isBank = minerTrans.input === REWARD_ADDRESS
-    const isRewardAmount = minerTrans.amount === MINING_REWARD
+    const isValidBlock = this.isValidBlock(block, data)
+    const isValidReward = this.isValidReward(rewardTransaction)
+    console.log(`isValidBlock: ${isValidBlock} isValidReward: ${isValidReward}`)
 
-    assert.deepStrictEqual(
-      blockTransactions,
-      pool.slice(0, blockTransactions.length)
-    )
-
-    if (isValid && isBank && isRewardAmount) {
+    if (isValidBlock && isValidReward) {
       this.chain.push(block)
     }
   }
 
-  validateBlockHash({block}) {
-    const realHash = cryptoHash(
-      block.difficulty,
-      block.nonce,
-      block.data,
-      block.lastHash,
-      block.timestamp
-    )
-    block.hash === realHash ? true : false
+  isValidReward(rewardTransaction) {
+    console.log(`rewardTransaction ${JSON.stringify(rewardTransaction)}`)
+    if (rewardTransaction.input.address === BANK_WALLET.publicKey &&
+      rewardTransaction.outputMap[Object.keys(rewardTransaction.outputMap).shift()] === MINING_REWARD) return true
+    return false
   }
-  setBlock({timestamp, lastHash, hash, data, nonce, difficulty}) {
-    this.tempBlock({timestamp, lastHash, hash, data, nonce, difficulty})
+
+  isValidBlock(block, data) {
+    const realHash = cryptoHash(
+      block.timestamp,
+      this.lastBlockHash(),
+      data,
+      block.nonce,
+      block.difficulty
+    )
+    return block.hash === realHash ? true : false
   }
 
   static isValidChain(chain) {

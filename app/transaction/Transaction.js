@@ -1,4 +1,4 @@
-const {v1: uuid} = require('uuid')
+const {v4: uuid} = require('uuid')
 
 const {verifySignature} = require('../utils')
 const {MINING_REWARD, REWARD_ADDRESS} = require('../../config')

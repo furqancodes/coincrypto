@@ -1,79 +1,50 @@
 const PubNub = require('pubnub')
 
 const config = require('../config')
-
 const credentials = config.PUBNUB
-
-const CHANNELS = {
-  TEST: 'TEST',
-  TRANSACTION: 'TRANSACTION',
-  BLOCK: 'BLOCK',
-}
-
+// const CHANNELS = {
+//   TEST: 'TEST',
+//   TRANSACTION: 'TRANSACTION',
+//   BLOCK: 'BLOCK',
+// }
 class Pubsub {
-  constructor({transactionPool, wallet, block, method}) {
-    this.block = block
-    this.wallet = wallet
-    this.method = method
-    this.transactionPool = transactionPool
+  constructor({method, channels}) {
     this.pubnub = new PubNub(credentials)
-    this.pubnub.subscribe({
-      channels: [Object.values(CHANNELS)],
-    })
+    this.method = method
     this.pubnub.addListener(this.listener())
+    this.pubnub.subscribe({channels})
   }
   listener() {
     return {
-      message: (msg) => {
+      message: async (msg) => {
         const {channel, message} = msg
         console.log(`successfully connected to ${channel} channel`, channel)
-        console.log(`message ${message}`)
-        const parsedMessage = JSON.parse(message)
-        switch (channel) {
-          case CHANNELS.TRANSACTION:
-            if (
-              !this.transactionPool.existingTransaction({
-                inputAddress: this.wallet.publicKey,
-              })
-            ) {
-              this.transactionPool.setTransaction(parsedMessage)
-            }
-            break
-          case CHANNELS.BLOCK:
-            const verifiedBlock = this.method(this.block)
-            if (verifiedBlock) {
-              this.block.setblock(verifiedBlock)
-            }
-            break
-          default:
-            break
-        }
+        console.log(`received messages on channel: "${channel}" message: ${JSON.stringify(message)}`)
+        await this.method({channel, message})
       },
     }
   }
-  subscribeToChannel() {
-    this.pubnub.subscribe({
-      channels: [Object.values(CHANNELS)],
-    })
-  }
-  publish({channel, message}) {
-    this.pubnub
-      .publish({channel, message})
-      .then(() => console.log('successful'))
-      .catch(err => console.error(err))
-  }
-  broadcastBlock({block}) {
-    this.publish({
-      channel: CHANNELS.BLOCKCHAIN,
-      message: JSON.stringify(block),
-    })
-  }
-  broadcastTransaction(transaction) {
-    this.publish({
-      channel: CHANNELS.TRANSACTION,
-      message: JSON.stringify(transaction),
-    })
-  }
-}
 
+  async publish({channel, message}) {
+    try {
+      console.log(`publishing messages on channel: "${channel}" message: ${JSON.stringify(message)}`)
+      await this.pubnub.publish({channel, message})
+      console.log(`successfully published messages on channel: "${channel}"`)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  // broadcastBlock({block}) {
+  //   this.publish({
+  //     channel: CHANNELS.BLOCKCHAIN,
+  //     message: JSON.stringify(block),
+  //   })
+  // }
+  // broadcastTransaction(transaction) {
+  //   this.publish({
+  //     channel: CHANNELS.TRANSACTION,
+  //     message: JSON.stringify(transaction),
+  //   })
+  // }
+}
 module.exports = Pubsub

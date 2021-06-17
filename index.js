@@ -1,52 +1,46 @@
 require('./app/db/mongoose')
 
-const request = require('request')
 const express = require('express')
 
 const Blockchain = require('./app/blockchain/Blockchain')
-const PubSub = require('./app/Pubsub')
 const Wallet = require('./app/Wallet')
+const PubSub = require('./app/pubsub')
 const TransactionMiner = require('./app/miner/Miner')
+const TransactionPool = require('./app/transaction/TransactionPool')
 const Users = require('./app/db/models/Users')
 const config = require('./config')
-
 const app = express()
 const blockchain = new Blockchain()
 const bankWallet = new Wallet(config.BANK_WALLET.privateKey)
+const transactionPool = new TransactionPool()
 
+const processBlock = ({channel, message}) => {
+  blockchain.validateAndAddBlock(message, transactionPool)
+}
+
+const pubsub = new PubSub({method: processBlock, channels: config.APP.CHANNELS})
 const ROOT_NODE = config.isDevelopment ?
   `http://localhost:${config.DEFAULT_PORT}` :
   'https://cyrpto.herokuapp.com'
-
 app.use(express.json())
-
 app.post('/wallet', async (req, res) => {
   const wallet = new Wallet()
-
   const user = new Users({
     publicKey: wallet.publicKey,
     balance: wallet.balance,
     privateKey: wallet.privateKey,
   })
-
   const transaction = Wallet.createTransaction({
     senderWallet: bankWallet,
     amount: 1000,
     recipient: wallet.publicKey,
     chain: blockchain.chain,
   })
-  transactionMiner = new TransactionMiner({
-    blockchain,
-    transactionPool,
-    wallet,
-    pubsub,
-  })
-  transactionPool.setTransaction(transaction)
-  pubsub.broadcastTransaction(transaction)
-  console.log('created')
 
-  await newWalletUser.save()
-  res.send(transactionPool)
+  transactionPool.setTransaction(transaction)
+  await pubsub.publish({channel: 'transactions', message: transaction})
+  await user.save()
+  res.send({publicKey: wallet.publicKey})
 })
 
 app.get('/blockchain', (req, res) => {
@@ -180,7 +174,7 @@ app.get('/', (req, res) => {
 // }
 
 // const PORT = process.env.PORT || PEER_PORT || DEFAULT_PORT
-app.listen(config.DEFAULT_PORT, () => {
+app.listen(ROOT_NODE, () => {
   console.log(`listening on ${config.DEFAULT_PORT}`)
   // if (PORT !== DEFAULT_PORT) {
   //   syncRoot()

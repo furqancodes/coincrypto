@@ -1,32 +1,46 @@
-const axios = require('axios')
-const express = require('express')
+const axios = require('axios').default
 
 const Blockchain = require('../blockchain/Blockchain')
 const TransactionPool = require('../transaction/TransactionPool')
 const Wallet = require('../Wallet')
-const Pubsub = require('../Pubsub')
+const PubSub = require('../pubsub')
 const Miner = require('./Miner')
-const {url, DEFAULT_PORT} = require('../../config')
+const {url, MINER, BANK_WALLET} = require('../../config')
+
+const bankWallet = new Wallet(BANK_WALLET.privateKey)
 
 const blockchain = new Blockchain()
 const transactionPool = new TransactionPool()
-const wallet = new Wallet()
-const pubsub = new Pubsub()
+const minerWallet = new Wallet()
 
-const app = express()
-app.use(express.json())
-
-const getChain = () => {
-  const {body} = axios.get(url)
-  return body
+const processTransaction = (transaction) => {
+  transactionPool.setTransaction(transaction)
 }
 
-const init = () => {
-  blockchain.chain = getChain()
-  return new Miner({blockchain, transactionPool, wallet, pubsub})
+const processMessage = ({channel, message}) => {
+  if (channel === 'confirmed-blocks') blockchain.chain.push(message)
+  else if (channel === 'transactions') processTransaction(message)
 }
 
-app.listen(DEFAULT_PORT, () => {
-  console.log(`listening on ${config.DEFAULT_PORT}`)
-  init()
-})
+const pubsub = new PubSub({method: processMessage, channels: MINER.CHANNELS})
+
+const getChain = async () => {
+  const {data} = await axios.get(url)
+  return data
+}
+
+const init = async () => {
+  try {
+    blockchain.chain = await getChain()
+    const miner = new Miner({blockchain, transactionPool, bankWallet, minerWallet, pubsub})
+
+    setInterval(() => {
+      miner.mineTransaction()
+    }, 10000)
+  } catch (err) {
+    console.log('err', err)
+    throw err
+  }
+}
+
+init()
