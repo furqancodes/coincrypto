@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --coverage",
     "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start-miner": "node app/miner/index.js",
+    "dev": "cross-env ENV='development' nodemon index.js",
     "dev-peer": "cross-env GENERATE_PEER_PORT='true' ENV='development' nodemon index.js",
     "lint": "node_modules\\.bin\\eslint ./ --fix"
   },
