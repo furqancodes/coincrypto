@@ -4,7 +4,7 @@ const {cryptoHash} = require('../utils')
 const Transaction = require('../transaction/Transaction')
 const {BANK_WALLET} = require('../../config')
 class Wallet {
-  constructor({privateKey}) {
+  constructor(privateKey) {
     this.keyPair = privateKey ? ec.keyFromPrivate(privateKey) : ec.genKeyPair()
     this.balance = STARTING_BALANCE
     this.publicKey = this.keyPair.getPublic().encode('hex')

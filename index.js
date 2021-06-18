@@ -49,8 +49,6 @@ app.get('/blockchain', (req, res) => {
 
 app.post('/api/transfer', async (req, res) => {
   const {amount, recipient, senderpublicKey} = req.body
-  const pubsub = new PubSub({method: processBlock, channels: config.APP.CHANNELS})
-
   const {privateKey} = await Users.findOne({
     publicKey: senderpublicKey,
   })
