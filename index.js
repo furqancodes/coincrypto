@@ -27,7 +27,7 @@ app.post('/wallet', async (req, res) => {
   const wallet = new Wallet()
   const user = new Users({
     publicKey: wallet.publicKey,
-    balance: wallet.balance,
+    balance: Wallet.calculateBalance({chain: blockchain.chain, address: wallet.publicKey}),
     privateKey: wallet.privateKey,
   })
   const transaction = Wallet.createTransaction({
@@ -81,7 +81,7 @@ app.post('/api/transfer', async (req, res) => {
 
 app.get('/walletinfo', (req, res) => {
   const {privateKey} = req.body
-  const wallet =new Wallet({privateKey})
+  const wallet =new Wallet(privateKey)
   const address = wallet.publicKey
   res.send({
     address,
