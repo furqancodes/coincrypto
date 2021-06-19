@@ -18,7 +18,7 @@ module.exports = {
     privateKey: process.env.bank_wallet_private_key,
     publicKey: process.env.bank_wallet_public_key,
   },
-  DEFAULT_PORT: 3000,
+  DEFAULT_PORT: isDevelopment ? 3000 : process.env.PORT,
   PUBNUB: {
     publishKey:
       process.env.pubnub_publish_key,
