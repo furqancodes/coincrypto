@@ -1,24 +1,23 @@
 {
-  "name": "cryptochain",
+  "name": "coincrypto",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
     "start": "node index.js",
-    "start-miner": "nodemon app/miner/index.js",
-    "dev": "cross-env ENV='development' nodemon index.js",
-    "dev-peer": "cross-env GENERATE_PEER_PORT='true' ENV='development' nodemon index.js",
+    "start:dev": "NODE_ENV='development' nodemon index.js",
+    "start-miner": "node app/miner/index.js",
+    "start-miner:dev": "NODE_ENV='development' nodemon app/miner/index.js",
     "lint": "node_modules\\.bin\\eslint ./ --fix"
   },
   "jest": {
     "testEnvironment": "node"
   },
-  "author": "Furqan",
+  "author": "Furqan Ashraf",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^26.0.23",
-    "cross-env": "^7.0.3",
     "eslint": "^7.0.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-standard": "^14.1.1",
@@ -31,7 +30,6 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "elliptic": "^6.5.4",
     "express": "^4.17.1",
