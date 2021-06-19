@@ -103,7 +103,8 @@ describe('Wallet', () => {
       })
     })
     describe('and there are outputs for the wallet', () => {
-      let transactionOne, transactionTwo, transactionThree
+      let transactionOne, transactionTwo, transactionThree, walletOne, walletTwo, walletthree, walletfour
+
       beforeEach(() => {
         walletOne = new Wallet()
         walletOne.balance = 1000

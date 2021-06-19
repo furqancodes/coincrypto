@@ -51,6 +51,7 @@ app.get('/blockchain', (req, res) => {
 
 app.post('/transfer', async (req, res) => {
   const {amount, recipient, senderPublicKey} = req.body
+
   const {privateKey} = await Users.findOne({
     publicKey: senderPublicKey,
   })
@@ -60,7 +61,8 @@ app.post('/transfer', async (req, res) => {
   })
   try {
     if (transaction) {
-      transaction.update({senderWallet: wallet, recipient, amount})
+      console.log('--------------------------'+JSON.stringify(transaction))
+      // transaction.update({senderWallet: wallet, recipient, amount})
     } else {
       transaction = Wallet.createTransaction({
         senderWallet: wallet,

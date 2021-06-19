@@ -1,7 +1,8 @@
+const crypto = require('crypto')
+
 const EC = require('elliptic').ec
 
 const ec = new EC('secp256k1')
-const crypto = require('crypto')
 
 const cryptoHash = (...inputs) => {
   const hash = crypto.createHash('sha256')

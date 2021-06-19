@@ -6,9 +6,9 @@
   "scripts": {
     "test": "jest --coverage",
     "start": "node index.js",
-    "start:dev": "NODE_ENV='development' nodemon index.js",
+    "start:dev": "cross-env NODE_ENV='development' nodemon index.js",
     "start-miner": "node app/miner/index.js",
-    "start-miner:dev": "NODE_ENV='development' nodemon app/miner/index.js",
+    "start-miner:dev": "cross-env NODE_ENV='development' nodemon app/miner/index.js",
     "lint": "node_modules\\.bin\\eslint ./ --fix"
   },
   "jest": {
@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
     "elliptic": "^6.5.4",
     "express": "^4.17.1",

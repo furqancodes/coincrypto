@@ -13,8 +13,8 @@ class Pubsub {
     return {
       message: async (msg) => {
         const {channel, message} = msg
-        console.log(`successfully connected to ${channel} channel`, channel)
-        console.log(`received messages on channel: "${channel}" message: ${JSON.stringify(message)}`)
+        // console.log(`successfully connected to ${channel} channel`, channel)
+        // console.log(`received messages on channel: "${channel}" message: ${JSON.stringify(message)}`)
         await this.method({channel, message})
       },
     }
@@ -22,9 +22,9 @@ class Pubsub {
 
   async publish({channel, message}) {
     try {
-      console.log(`publishing messages on channel: "${channel}" message: ${JSON.stringify(message)}`)
+      // console.log(`publishing messages on channel: "${channel}" message: ${JSON.stringify(message)}`)
       await this.pubnub.publish({channel, message})
-      console.log(`successfully published messages on channel: "${channel}"`)
+      // console.log(`successfully published messages on channel: "${channel}"`)
     } catch (err) {
       console.error(err)
     }
