@@ -103,7 +103,7 @@ class Blockchain {
     if (isValidBlock && isValidReward) {
       this.chain.push(block)
       data.forEach((transaction) => {
-        transactionPool.removeTransaction(transaction)
+        transactionPool.removeTransaction(transaction.id)
       })
     }
   }
