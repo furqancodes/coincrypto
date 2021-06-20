@@ -20,6 +20,9 @@ class TransactionPool {
       Transaction.validTransaction(transaction)
     )
   }
+  removeTransaction(transactionId) {
+    delete this.transactionMap[transactionId]
+  }
   clear() {
     this.setMap({})
   }

@@ -62,7 +62,7 @@ app.post('/transfer', async (req, res) => {
   try {
     if (transaction) {
       console.log('--------------------------'+JSON.stringify(transaction))
-      // transaction.update({senderWallet: wallet, recipient, amount})
+      transaction.update({senderWallet: wallet, recipient, amount, transactionPool})
     } else {
       transaction = Wallet.createTransaction({
         senderWallet: wallet,
