@@ -51,14 +51,17 @@ app.get('/blockchain', (req, res) => {
 
 app.post('/transfer', async (req, res) => {
   const {amount, recipient, senderPublicKey} = req.body
-
+  console.log(senderPublicKey)
   const {privateKey} = await Users.findOne({
     publicKey: senderPublicKey,
   })
+  // console.log(`privateKEY ${privateKey}`)
   const wallet = new Wallet(privateKey)
+  // console.log(`wallet`+JSON.stringify(wallet))
   let transaction = transactionPool.existingTransaction({
     inputAddress: wallet.publicKey,
   })
+  // console.log(`transaction`+JSON.stringify(transaction))
   try {
     if (transaction) {
       console.log('--------------------------'+JSON.stringify(transaction))
@@ -70,6 +73,7 @@ app.post('/transfer', async (req, res) => {
         amount,
         chain: blockchain.chain,
       })
+      // console.log(transaction+"popopop")
     }
   } catch (error) {
     return res.status(400).json({type: 'error', message: error.message})
@@ -85,6 +89,7 @@ app.post('/transfer', async (req, res) => {
 
 app.get('/wallet/:publicKey', async (req, res) => {
   const address = req.params.publicKey
+  // console.log(`address ${address}`)
   const {privateKey} = await Users.findOne({
     publicKey: address,
   })
