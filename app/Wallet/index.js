@@ -4,11 +4,11 @@ const {cryptoHash} = require('../utils')
 const Transaction = require('../transaction/Transaction')
 const {BANK_WALLET} = require('../../config')
 class Wallet {
-  constructor(privateKey) {
+  constructor(privateKey, chain) {
     this.keyPair = privateKey ? ec.keyFromPrivate(privateKey) : ec.genKeyPair()
-    this.balance = STARTING_BALANCE
     this.publicKey = this.keyPair.getPublic().encode('hex')
     this.privateKey = this.keyPair.getPrivate().toString('hex')
+    this.balance = privateKey && chain ?Wallet.calculateBalance({chain, address: this.publicKey}) :STARTING_BALANCE
   }
 
   sign(data) {

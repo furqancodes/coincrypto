@@ -56,7 +56,7 @@ app.post('/transfer', async (req, res) => {
     publicKey: senderPublicKey,
   })
   // console.log(`privateKEY ${privateKey}`)
-  const wallet = new Wallet(privateKey)
+  const wallet = new Wallet(privateKey, blockchain.chain)
   // console.log(`wallet`+JSON.stringify(wallet))
   let transaction = transactionPool.existingTransaction({
     inputAddress: wallet.publicKey,
@@ -73,7 +73,6 @@ app.post('/transfer', async (req, res) => {
         amount,
         chain: blockchain.chain,
       })
-      // console.log(transaction+"popopop")
     }
   } catch (error) {
     return res.status(400).json({type: 'error', message: error.message})

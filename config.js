@@ -20,12 +20,9 @@ module.exports = {
   },
   DEFAULT_PORT: isDevelopment ? 3000 : process.env.PORT,
   PUBNUB: {
-    publishKey:
-      process.env.pubnub_publish_key,
-    subscribeKey:
-      process.env.pubnub_subscribe_key,
-    secretKey:
-      process.env.pubnub_secret_key,
+    publishKey: isDevelopment ? 'pub-c-816b3658-70c2-4b99-9cb4-4458ec970ee5' :process.env.pubnub_publish_key,
+    subscribeKey: isDevelopment ? 'sub-c-a71239be-d220-11eb-b6c2-0298fc8e4944' :process.env.pubnub_subscribe_key,
+    secretKey: isDevelopment ? 'sec-c-MjBmNDQ4ODAtM2JjYy00MzY4LWIwZDMtYjZjZjEwOWYwODJl' :process.env.pubnub_secret_key,
   },
   URL: isDevelopment ? 'http://localhost:3000' : 'https://coincrypto-app.herokuapp.com',
   CHANNELS: {
