@@ -15,7 +15,7 @@ class Transaction {
         amount,
       })
     this.input =
-      input || this.createInput({senderWallet, outputMap: this.outputMap})
+      input || this.createInput({senderWallet, outputMap: this.outputMap, amount})
   }
 
   createOutputMap({senderWallet, recipient, amount}) {
@@ -25,10 +25,11 @@ class Transaction {
     return outputMap
   }
 
-  createInput({senderWallet, outputMap}) {
+  createInput({senderWallet, outputMap, amount}) {
     return {
       timestamp: Date.now(),
       amount: senderWallet.balance,
+      sendAmount: amount,
       address: senderWallet.publicKey,
       signature: senderWallet.sign(outputMap),
     }
