@@ -107,6 +107,7 @@ app.get('/', (req, res) => {
   res.send({getBlockchain: '/blockchain'})
 })
 
-app.listen(config.DEFAULT_PORT, () => {
+app.listen(config.DEFAULT_PORT, async () => {
   console.log(`listening on ${config.URL}`)
+  await blockchain.loadBlocks()
 })

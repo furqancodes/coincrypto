@@ -4,6 +4,7 @@ const {cryptoHash} = require('../utils')
 const Transaction = require('../transaction/Transaction')
 const {REWARD_ADDRESS, MINING_REWARD, BANK_WALLET} = require('../../config')
 const Wallet = require('../Wallet')
+const Blocks = require('../db/models/Blocks')
 
 class Blockchain {
   constructor() {
@@ -89,8 +90,12 @@ class Blockchain {
   lastBlockHash() {
     return this.chain[this.chain.length - 1].hash
   }
-
-  validateAndAddBlock(block, transactionPool) {
+  async loadBlocks() {
+    const blocks = await Blocks.find({}).sort({_id: 1})
+    blocks.forEach(block => this.chain.push(block.toJSON().data))
+    console.log(`loaded ${blocks.length} blocks into chain`)
+  }
+  async validateAndAddBlock(block, transactionPool) {
     const validTransaction = transactionPool.validTransactions()
     const rewardTransaction = block.data.pop()
     const data = validTransaction.slice(validTransaction.length - block.data.length)
@@ -102,6 +107,8 @@ class Blockchain {
 
     if (isValidBlock && isValidReward) {
       this.chain.push(block)
+      await new Blocks({data: block}).save()
+      console.log('new block saved in db')
       data.forEach((transaction) => {
         transactionPool.removeTransaction(transaction.id)
       })
