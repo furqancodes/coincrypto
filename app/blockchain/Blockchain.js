@@ -20,24 +20,6 @@ class Blockchain {
     return newBlock
   }
 
-  replaceChain(chain, validateTransactions, onSuccess) {
-    if (chain.length <= this.chain.length) {
-      console.error('incoming chain must be bigger')
-      return
-    } else if (!Blockchain.isValidChain(chain)) {
-      console.error('chain must be valid ')
-      return
-    } else if (validateTransactions && !this.validTransactionData({chain})) {
-      console.error('The incoming chain has invalid data')
-      return
-    } else if (onSuccess) {
-      console.log('clearing Pool')
-      onSuccess()
-    }
-    console.log('replacing chain with', chain)
-    this.chain = chain
-  }
-
   validTransactionData({chain}) {
     for (let i = 1; i < chain.length; i++) {
       const block = chain[i]
@@ -90,11 +72,13 @@ class Blockchain {
   lastBlockHash() {
     return this.chain[this.chain.length - 1].hash
   }
+
   async loadBlocks() {
     const blocks = await Blocks.find({}).sort({_id: 1})
     blocks.forEach(block => this.chain.push(block.toJSON().data))
-    console.log(`loaded ${blocks.length} blocks into chain`)
+    console.info(`loaded ${blocks.length} blocks into chain`)
   }
+
   async validateAndAddBlock(block, transactionPool) {
     const validTransaction = transactionPool.validTransactions()
     const rewardTransaction = block.data.pop()
@@ -103,12 +87,12 @@ class Blockchain {
 
     const isValidBlock = this.isValidBlock(block, data)
     const isValidReward = this.isValidReward(rewardTransaction)
-    console.log(`isValidBlock: ${isValidBlock} isValidReward: ${isValidReward}`)
+    console.info(`isValidBlock: ${isValidBlock} isValidReward: ${isValidReward}`)
 
     if (isValidBlock && isValidReward) {
       this.chain.push(block)
       await new Blocks({data: block}).save()
-      console.log('new block saved in db')
+      console.info('new block saved in db')
       data.forEach((transaction) => {
         transactionPool.removeTransaction(transaction.id)
       })
@@ -116,7 +100,6 @@ class Blockchain {
   }
 
   isValidReward(rewardTransaction) {
-    console.log(`rewardTransaction ${JSON.stringify(rewardTransaction)}`)
     if (rewardTransaction.input.address === BANK_WALLET.publicKey &&
       rewardTransaction.outputMap[Object.keys(rewardTransaction.outputMap).shift()] === MINING_REWARD) return true
     return false

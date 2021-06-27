@@ -12,21 +12,27 @@ class Pubsub {
   listener() {
     return {
       message: async (msg) => {
-        const {channel, message} = msg
-        // console.log(`successfully connected to ${channel} channel`, channel)
-        // console.log(`received messages on channel: "${channel}" message: ${JSON.stringify(message)}`)
-        await this.method({channel, message})
+        try {
+          const {channel, message} = msg
+          console.info(`successfully connected to ${channel} channel`)
+          console.info(`received messages on channel: ${channel} message: ${JSON.stringify(message)}`)
+          await this.method({channel, message})
+        } catch (err) {
+          console.error(`error processing message ${err}`)
+          throw err
+        }
       },
     }
   }
 
   async publish({channel, message}) {
     try {
-      // console.log(`publishing messages on channel: "${channel}" message: ${JSON.stringify(message)}`)
+      console.info(`publishing messages on channel: ${channel} message: ${JSON.stringify(message)}`)
       await this.pubnub.publish({channel, message})
-      // console.log(`successfully published messages on channel: "${channel}"`)
+      console.info(`successfully published messages on channel: "${channel}"`)
     } catch (err) {
-      console.error(err)
+      console.error(`error publishing message on channel ${channel} | ${err}`)
+      throw err
     }
   }
 }

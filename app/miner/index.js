@@ -37,7 +37,7 @@ const getChain = async () => {
 }
 
 const init = async () => {
-  await sleep(5000)
+  await sleep(7000)
   blockchain.chain = await getChain()
   const miner = new Miner({blockchain, transactionPool, bankWallet, minerWallet, pubsub})
 
@@ -47,7 +47,7 @@ const init = async () => {
 }
 
 process.on('unhandledRejection', async (error) => {
-  console.log(`unhandledRejection ${error}`)
+  console.error(`unhandledRejection ${error}`)
   throw error
 })
 

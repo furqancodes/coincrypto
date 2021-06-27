@@ -23,7 +23,7 @@ class Miner {
       this.pubsub.publish({channel: 'unconfirmed-blocks', message: block})
       this.transactionPool.clear()
     }
-    console.log('transaction pool empty')
+    console.info('transaction pool empty')
   }
 }
 

@@ -4,13 +4,12 @@ const {cryptoHash} = require('../utils')
 const Wallet = require('../Wallet')
 const Transaction = require('../transaction/Transaction')
 describe('blockchain', () => {
-  let blockchain, newChain, originalChain, errorMock
+  let blockchain, newChain, errorMock
   beforeEach(() => {
     blockchain = new Blockchain()
     newChain = new Blockchain()
     errorMock = jest.fn()
 
-    originalChain = blockchain.chain
     global.console.error = errorMock
   })
 
@@ -79,59 +78,7 @@ describe('blockchain', () => {
       })
     })
   })
-  describe('replaceChain', () => {
-    let errorMock, logMock
-    beforeEach(() => {
-      errorMock = jest.fn()
-      logMock = jest.fn()
-      global.console.error = errorMock
-      global.console.log = logMock
-    })
-    describe('when the new chain is not long enough', () => {
-      beforeEach(() => {
-        newChain.chain[0] = {new: 'chainis'}
-        blockchain.replaceChain(newChain.chain)
-      })
-      it('does not replace the chain', () => {
-        expect(blockchain.chain).toEqual(originalChain)
-      })
-      it('logs error', () => {
-        expect(errorMock).toHaveBeenCalled()
-      })
-    })
-    describe('when the newChain is longer', () => {
-      beforeEach(() => {
-        newChain.addBlock({data: 'test-one-data'})
-        newChain.addBlock({data: 'test-two-data'})
-        newChain.addBlock({data: 'test-three-data'})
-      })
-      describe('when the chain is valid', () => {
-        beforeEach(() => {
-          blockchain.replaceChain(newChain.chain, false, () => {
-            console.log('callback')
-          })
-        })
-        it('does  replace chain', () => {
-          expect(blockchain.chain).toEqual(newChain.chain)
-        })
-        it('logs the chain replacement', () => {
-          expect(logMock).toHaveBeenCalled()
-        })
-      })
-      describe('when the chain is invalid', () => {
-        beforeEach(() => {
-          newChain.chain[2].hash = 'again some fake ass hash'
-          blockchain.replaceChain(newChain.chain, true)
-        })
-        it('does not replace chain', () => {
-          expect(blockchain.chain).toEqual(originalChain)
-        })
-        it('logs an errot', () => {
-          expect(errorMock).toHaveBeenCalled()
-        })
-      })
-    })
-  })
+
   describe('validTransactionData()', () => {
     let transaction, rewardTransaction, wallet
 
@@ -144,17 +91,14 @@ describe('blockchain', () => {
         amount: 0,
         chain: blockchain.chain,
       })
-      console.log(transaction)
       rewardTransaction = Transaction.rewardTransaction({
         minerWallet: wallet,
       })
-      console.log(rewardTransaction)
     })
 
     describe('and the transaction data is valid', () => {
       it('returns true', () => {
         newChain.addBlock({data: [transaction, rewardTransaction]})
-        console.log(newChain.chain)
         expect(blockchain.validTransactionData({chain: newChain})).toBe(true)
         expect(errorMock).not.toHaveBeenCalled()
       })
