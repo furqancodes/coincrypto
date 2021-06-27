@@ -18,6 +18,10 @@ module.exports = {
     privateKey: process.env.bank_wallet_private_key,
     publicKey: process.env.bank_wallet_public_key,
   },
+  MINER_WALLET: {
+    privateKey: process.env.miner_private_key,
+    publicKey: process.env.miner_public_key,
+  },
   DEFAULT_PORT: isDevelopment ? 3000 : process.env.PORT,
   PUBNUB: {
     publishKey: isDevelopment ? 'pub-c-816b3658-70c2-4b99-9cb4-4458ec970ee5' :process.env.pubnub_publish_key,

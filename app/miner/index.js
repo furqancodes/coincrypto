@@ -6,13 +6,13 @@ const TransactionPool = require('../transaction/TransactionPool')
 const Wallet = require('../Wallet')
 const PubSub = require('../pubsub')
 const Miner = require('./Miner')
-const {URL, CHANNELS, BANK_WALLET} = require('../../config')
+const {URL, CHANNELS, BANK_WALLET, MINER_WALLET} = require('../../config')
 
 const bankWallet = new Wallet(BANK_WALLET.privateKey)
 
 const blockchain = new Blockchain()
 const transactionPool = new TransactionPool()
-const minerWallet = new Wallet()
+const minerWallet = new Wallet(MINER_WALLET.privateKey)
 
 const processTransaction = (transaction) => {
   transactionPool.setTransaction(transaction)
