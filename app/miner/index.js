@@ -18,8 +18,18 @@ const processTransaction = (transaction) => {
   transactionPool.setTransaction(transaction)
 }
 
+const processBlock = (block) => {
+  const hash = blockchain.lastBlockHash()
+  if (block.lastHash === hash) {
+    blockchain.chain.push(block)
+    console.info(`block added ${block.hash}`)
+  } else if (block.hash === hash) {
+    console.info(`already have the block ${block.hash}`)
+  }
+}
+
 const processMessage = ({channel, message}) => {
-  if (channel === 'confirmed-blocks') blockchain.chain.push(message)
+  if (channel === 'confirmed-blocks') processBlock(message)
   else if (channel === 'transactions') processTransaction(message)
 }
 

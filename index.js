@@ -21,8 +21,11 @@ const blockchain = new Blockchain()
 const bankWallet = new Wallet(config.BANK_WALLET.privateKey)
 const transactionPool = new TransactionPool()
 
-const processBlock = ({channel, message}) => {
-  blockchain.validateAndAddBlock(message, transactionPool)
+const processBlock = async ({channel, message}) => {
+  const block = await blockchain.validateAndAddBlock(message, transactionPool)
+  if (block) {
+    await pubsub.publish({channel: 'confirmed-blocks', message: block})
+  }
 }
 
 const pubsub = new PubSub({method: processBlock, channels: config.CHANNELS.APP})

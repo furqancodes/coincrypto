@@ -96,7 +96,9 @@ class Blockchain {
       data.forEach((transaction) => {
         transactionPool.removeTransaction(transaction.id)
       })
+      return block
     }
+    return null
   }
 
   isValidReward(rewardTransaction) {
