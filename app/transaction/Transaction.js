@@ -4,9 +4,8 @@ const {verifySignature} = require('../utils')
 const {MINING_REWARD, REWARD_ADDRESS, BANK_WALLET} = require('../../config')
 
 class Transaction {
-  // constructor({senderWallet, recipient, amount, input, outputMap}) {
-  constructor({input, outputMap, senderWallet, recipient, amount}) {
-    this.id = uuid()
+  constructor({id, input, outputMap, senderWallet, recipient, amount}) {
+    this.id = id || uuid()
     this.outputMap =
       outputMap ||
       this.createOutputMap({
