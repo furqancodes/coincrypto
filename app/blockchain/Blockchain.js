@@ -81,7 +81,7 @@ class Blockchain {
 
   async validateAndAddBlock(block, transactionPool) {
     const validTransaction = transactionPool.validTransactions()
-    const rewardTransaction = block.data.pop()
+    const rewardTransaction = block.data[block.data.length - 1]
     const data = validTransaction.slice(validTransaction.length - block.data.length)
     data.push(rewardTransaction)
 
