@@ -1,4 +1,5 @@
 const Transaction = require('../transaction/Transaction')
+const Wallet = require('../Wallet')
 const {MINING_REWARD} = require('../../config')
 class Miner {
   constructor({blockchain, transactionPool, bankWallet, minerWallet, pubsub}) {
@@ -21,6 +22,8 @@ class Miner {
 
       const block = this.blockchain.addBlock({data: validTransactions})
       this.pubsub.publish({channel: 'unconfirmed-blocks', message: block})
+      this.bankWallet.balance = Wallet.calculateBalance({chain: this.blockchain.chain, address: this.bankWallet.publicKey})
+      this.minerWallet.balance = Wallet.calculateBalance({chain: this.blockchain.chain, address: this.minerWallet.publicKey})
       this.transactionPool.clear()
     }
     console.info('transaction pool empty')

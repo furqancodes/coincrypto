@@ -48,8 +48,8 @@ const getChain = async () => {
 const init = async () => {
   await sleep(7000)
   blockchain.chain = await getChain()
-  bankWallet = new Wallet(BANK_WALLET.privateKey)
-  minerWallet = new Wallet(MINER_WALLET.privateKey)
+  bankWallet = new Wallet(BANK_WALLET.privateKey, blockchain.chain)
+  minerWallet = new Wallet(MINER_WALLET.privateKey, blockchain.chain)
   const miner = new Miner({blockchain, transactionPool, bankWallet, minerWallet, pubsub})
 
 
