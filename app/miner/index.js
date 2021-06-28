@@ -8,11 +8,10 @@ const PubSub = require('../pubsub')
 const Miner = require('./Miner')
 const {URL, CHANNELS, BANK_WALLET, MINER_WALLET} = require('../../config')
 
-const bankWallet = new Wallet(BANK_WALLET.privateKey)
-
+let bankWallet, minerWallet
 const blockchain = new Blockchain()
 const transactionPool = new TransactionPool()
-const minerWallet = new Wallet(MINER_WALLET.privateKey)
+
 
 const processTransaction = (transaction) => {
   transactionPool.setTransaction(transaction)
@@ -49,7 +48,10 @@ const getChain = async () => {
 const init = async () => {
   await sleep(7000)
   blockchain.chain = await getChain()
+  bankWallet = new Wallet(BANK_WALLET.privateKey)
+  minerWallet = new Wallet(MINER_WALLET.privateKey)
   const miner = new Miner({blockchain, transactionPool, bankWallet, minerWallet, pubsub})
+
 
   setInterval(() => {
     miner.mineTransaction()

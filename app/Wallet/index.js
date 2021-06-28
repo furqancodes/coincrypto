@@ -8,7 +8,7 @@ class Wallet {
     this.keyPair = privateKey ? ec.keyFromPrivate(privateKey) : ec.genKeyPair()
     this.publicKey = this.keyPair.getPublic().encode('hex')
     this.privateKey = this.keyPair.getPrivate().toString('hex')
-    this.balance = privateKey && chain ?Wallet.calculateBalance({chain, address: this.publicKey}) :STARTING_BALANCE
+    this.balance = privateKey && chain ? Wallet.calculateBalance({chain, address: this.publicKey}) : STARTING_BALANCE
   }
 
   sign(data) {
