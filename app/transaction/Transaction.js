@@ -28,7 +28,7 @@ class Transaction {
     return {
       timestamp: Date.now(),
       amount: senderWallet.balance,
-      sendAmount: amount,
+      sendAmount: parseInt(amount, 10),
       address: senderWallet.publicKey,
       signature: senderWallet.sign(outputMap),
     }
